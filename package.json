@@ -1,0 +1,25 @@
+{
+  "name": "dicksonfield-game",
+  "version": "1.0.0",
+  "description": "Snake game with a twist",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "Dicksonfield",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^4.1.0",
+    "gulp-sass-glob": "^1.1.0",
+    "gulp-wait": "0.0.2",
+    "nodemon": "^2.0.6"
+  }
+}

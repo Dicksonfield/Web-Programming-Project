@@ -1,9 +1,10 @@
 let players = [];
 
 const playerJoin = (id, name) => {
-    const left = Math.floor(Math.random() * 100) + 1 + '%';
-    const top = Math.floor(Math.random() * 100) + 1 + '%';
+    const left = Math.floor(Math.random() * 100)*5 + "px";
+    const top = Math.floor(Math.random() * 100)*5 + "px";
     const user = { id, name, left, top }
+    console.log(user)
     players.push(user);
 
     return user

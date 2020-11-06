@@ -1,5 +1,7 @@
 const socket = io();
 const canvas = document.getElementById('canvas');
+const snakes = document.getElementById('snakes');
+const foods = document.getElementById('foods');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
@@ -14,15 +16,29 @@ socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
 })
 
+
+
+const generateFood = () => {
+    const food = document.getElementById("food");
+    const left = Math.floor(Math.random() * 100) + 1 + '%';
+    const top = Math.floor(Math.random() * 100) + 1 + '%';
+    food.style.left = left
+    food.style.top = top
+    food.id = "food";
+}
+
+generateFood();
+
 const outputPlayers = players => {
-    canvas.innerHTML = "";
+    snakes.innerHTML = "";
     for(i=0; i<players.length; i++) {
         let snake = document.createElement("div");
         snake.id = "snake";
+        snake.className = "snake"
         snake.setAttribute('data-id', players[i].id);
         snake.style.left = players[i].left;
         snake.style.top = players[i].top;
-        canvas.appendChild(snake)
+        snakes.appendChild(snake)
     }
 }
 
@@ -36,7 +52,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 50);
 
 const resetSnake = (snake) => {
     snake.style.top = "50%";
@@ -44,7 +60,6 @@ const resetSnake = (snake) => {
 }
 
 const outputMove = (direction, id) => {
-    console.log(direction, id)
     let snake = document.querySelector(`[data-id='${id}']`)
     let style = getComputedStyle(snake);
     const left = parseInt(style.left);
@@ -65,7 +80,15 @@ const outputMove = (direction, id) => {
             break;
       }
 
-    if (left < 10 || left > (parseInt(styleCanvas.width)-10) || top < 10 || top > (parseInt(styleCanvas.height)-10)) {
+    snake = document.querySelector(`[data-id='${id}']`)
+    style = getComputedStyle(snake);
+    let food = document.getElementById("food");
+    let styleFood = getComputedStyle(food);
+    if(style.left == styleFood.left && style.top == styleFood.top) {
+        generateFood();
+    }
+    console.log(left)
+    if (left < 5 || left >= (parseInt(styleCanvas.width)-10) || top < 5 || top >= (parseInt(styleCanvas.height)-10)) {
         resetSnake(snake);
     } 
 }

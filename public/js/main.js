@@ -15,6 +15,7 @@ socket.on('movePlayer', ({ direction, id }) => {
 })
 
 const outputPlayers = players => {
+    canvas.innerHTML = "";
     for(i=0; i<players.length; i++) {
         let snake = document.createElement("div");
         snake.id = "snake";
@@ -65,7 +66,6 @@ const outputMove = (direction, id) => {
       }
 
     if (left < 10 || left > (parseInt(styleCanvas.width)-10) || top < 10 || top > (parseInt(styleCanvas.height)-10)) {
-        alert("Game over");
         resetSnake(snake);
     } 
 }

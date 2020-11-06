@@ -9,11 +9,21 @@ const playerJoin = (id, name) => {
     return user
 }
 
+const playerLeave = (id) => {
+    const player = players.find(player => player.id == id);
+    console.log(player)
+    players = players.filter(player => player.id != id);
+    console.log(players)
+
+    return player;
+}
+
 const getPlayers = () => {
     return players;
 }
 
 module.exports = {
     playerJoin,
-    getPlayers
+    getPlayers,
+    playerLeave
 };

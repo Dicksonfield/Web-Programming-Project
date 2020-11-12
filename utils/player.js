@@ -1,9 +1,9 @@
 let players = [];
 
 const playerJoin = (id, name) => {
-    const left = Math.floor(Math.random() * 100)*5 + "px";
-    const top = Math.floor(Math.random() * 100)*5 + "px";
-    const user = { id, name, left, top }
+    const x = Math.floor(Math.random() * 21);
+    const y = Math.floor(Math.random() * 21);
+    const user = { id, name, x, y }
     console.log(user)
     players.push(user);
 
@@ -12,9 +12,9 @@ const playerJoin = (id, name) => {
 
 const playerLeave = (id) => {
     const player = players.find(player => player.id == id);
-    console.log(player)
-    players = players.filter(player => player.id != id);
-    console.log(players)
+    if(player) {
+        players = players.filter(player => player.id != id);
+    }
 
     return player;
 }

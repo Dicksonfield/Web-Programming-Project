@@ -18,11 +18,13 @@ io.on('connection', socket => {
             players: getPlayers()
         })
     })
+    
     socket.on('movePlayer', ({ direction }) => {
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
 
     socket.on('disconnect', () => {
+        console.log("DISCONNECT")
         playerLeave(socket.id);
         io.emit('updatePlayers', {
             players: getPlayers()

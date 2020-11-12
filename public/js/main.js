@@ -1,7 +1,7 @@
 const socket = io();
 const canvas = document.getElementById('canvas');
-const snakes = document.getElementById('snakes');
-const foods = document.getElementById('foods');
+// const snakes = document.getElementById('snakes');
+// const foods = document.getElementById('foods');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
@@ -20,25 +20,24 @@ socket.on('movePlayer', ({ direction, id }) => {
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    const left = Math.floor(Math.random() * 100) + 1 + '%';
-    const top = Math.floor(Math.random() * 100) + 1 + '%';
-    food.style.left = left
-    food.style.top = top
+    const x = Math.floor(Math.random() * 25);
+    const y = Math.floor(Math.random() * 25);
+    food.style.gridRowStart = x
+    food.style.gridColumnStart = y
     food.id = "food";
 }
 
 generateFood();
 
 const outputPlayers = players => {
-    snakes.innerHTML = "";
     for(i=0; i<players.length; i++) {
         let snake = document.createElement("div");
         snake.id = "snake";
         snake.className = "snake"
         snake.setAttribute('data-id', players[i].id);
-        snake.style.left = players[i].left;
-        snake.style.top = players[i].top;
-        snakes.appendChild(snake)
+        snake.style.gridRowStart = players[i].x;
+        snake.style.gridColumnStart = players[i].y;
+        canvas.appendChild(snake)
     }
 }
 
@@ -52,30 +51,33 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 50);
+}, 100);
 
 const resetSnake = (snake) => {
-    snake.style.top = "50%";
-    snake.style.left = "50%";
+    const x = Math.floor(Math.random() * 21);
+    const y = Math.floor(Math.random() * 21);
+    snake.style.gridRowStart = x;
+    snake.style.gridColumnStart = y;
 }
 
 const outputMove = (direction, id) => {
     let snake = document.querySelector(`[data-id='${id}']`)
     let style = getComputedStyle(snake);
-    const left = parseInt(style.left);
-    const top = parseInt(style.top);
+    let x = parseInt(style.gridRowStart);
+    let y = parseInt(style.gridColumnStart);
     switch(direction) {
         case "ArrowLeft":
-            snake.style.left = `${left - 5}px`;
+            snake.style.gridColumnStart = `${y - 1 == 0 ? -1 : y - 1}`;
+            
           break;
         case "ArrowRight":
-            snake.style.left = `${left + 5}px`;
+            snake.style.gridColumnStart = `${y + 1}`;
           break;
         case "ArrowUp":
-            snake.style.top = `${top - 5}px`;
+            snake.style.gridRowStart = `${x - 1 == 0 ? -1 : x - 1}`;
             break;
         case "ArrowDown":
-            snake.style.top = `${top + 5}px`;
+            snake.style.gridRowStart = `${x + 1}`;
         default:
             break;
       }
@@ -84,11 +86,10 @@ const outputMove = (direction, id) => {
     style = getComputedStyle(snake);
     let food = document.getElementById("food");
     let styleFood = getComputedStyle(food);
-    if(style.left == styleFood.left && style.top == styleFood.top) {
+    if(style.gridColumnStart == styleFood.gridColumnStart && style.gridRowStart == styleFood.gridRowStart) {
         generateFood();
     }
-    console.log(left)
-    if (left < 5 || left >= (parseInt(styleCanvas.width)-10) || top < 5 || top >= (parseInt(styleCanvas.height)-10)) {
+    if(x > 25 || y > 25 || x < 0 || y < 0) {
         resetSnake(snake);
-    } 
+    }
 }

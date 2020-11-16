@@ -5,6 +5,7 @@ const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
+const player = false;
 
 socket.emit('joinGame', { name: "Jason" });
 
@@ -16,12 +17,16 @@ socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
 })
 
+// socket.on('getPlayer', ({player}) => {
+//     player = player
+// })
+
 
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    const x = Math.floor(Math.random() * 25);
-    const y = Math.floor(Math.random() * 25);
+    const x = Math.floor(Math.random() * 50);
+    const y = Math.floor(Math.random() * 50);
     food.style.gridRowStart = x
     food.style.gridColumnStart = y
     food.id = "food";
@@ -30,15 +35,27 @@ const generateFood = () => {
 generateFood();
 
 const outputPlayers = players => {
+    canvas.innerHTML = "";
     for(i=0; i<players.length; i++) {
-        let snake = document.createElement("div");
-        snake.id = "snake";
-        snake.className = "snake"
-        snake.setAttribute('data-id', players[i].id);
-        snake.style.gridRowStart = players[i].x;
-        snake.style.gridColumnStart = players[i].y;
-        canvas.appendChild(snake)
+        players[i].snake.forEach(snakePart => {
+            let snake = document.createElement("div");
+            snake.id = "snake";
+            snake.className = "snake"
+            snake.setAttribute('data-id', players[i].id);
+            snake.style.gridRowStart = snakePart.x;
+            snake.style.gridColumnStart = snakePart.y;
+            canvas.appendChild(snake)
+        })
     }
+
+    let food = document.createElement("div");
+    food.id = "food"
+    food.className = "food"
+    const x = Math.floor(Math.random() * 50);
+    const y = Math.floor(Math.random() * 50);
+    food.style.gridRowStart = x;
+    food.style.gridColumnStart = y;
+    canvas.appendChild(food);
 }
 
 document.addEventListener("keydown", (e) => {
@@ -51,45 +68,53 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 50);
 
 const resetSnake = (snake) => {
-    const x = Math.floor(Math.random() * 21);
-    const y = Math.floor(Math.random() * 21);
-    snake.style.gridRowStart = x;
-    snake.style.gridColumnStart = y;
+    // Fix resetting snake at same location for all players
+    for(i=1; i<snake.length; i++) {
+        snake[i].remove();
+    }
+    const x = Math.floor(Math.random() * 50);
+    const y = Math.floor(Math.random() * 50);
+    snake[0].style.gridRowStart = 20;
+    snake[0].style.gridColumnStart = 20;
 }
 
 const outputMove = (direction, id) => {
-    let snake = document.querySelector(`[data-id='${id}']`)
-    let style = getComputedStyle(snake);
+    let snake = document.querySelectorAll(`[data-id='${id}']`)
+    let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
+    for(i=1; i<snake.length; i++) {
+        snake[i].style.gridRowStart = snake_copy[i - 1].row;
+        snake[i].style.gridColumnStart = snake_copy[i - 1].column;
+    }
+    let style = getComputedStyle(snake[0]);
     let x = parseInt(style.gridRowStart);
     let y = parseInt(style.gridColumnStart);
     switch(direction) {
         case "ArrowLeft":
-            snake.style.gridColumnStart = `${y - 1 == 0 ? -1 : y - 1}`;
-            
-          break;
+            snake[0].style.gridColumnStart = `${y - 1 == 0 ? -1 : y - 1}`;
+            break;
         case "ArrowRight":
-            snake.style.gridColumnStart = `${y + 1}`;
-          break;
+            snake[0].style.gridColumnStart = `${y + 1}`;
+            break;
         case "ArrowUp":
-            snake.style.gridRowStart = `${x - 1 == 0 ? -1 : x - 1}`;
+            snake[0].style.gridRowStart = `${x - 1 == 0 ? -1 : x - 1}`;
             break;
         case "ArrowDown":
-            snake.style.gridRowStart = `${x + 1}`;
+            snake[0].style.gridRowStart = `${x + 1}`;
         default:
             break;
       }
-
-    snake = document.querySelector(`[data-id='${id}']`)
-    style = getComputedStyle(snake);
+    
     let food = document.getElementById("food");
     let styleFood = getComputedStyle(food);
     if(style.gridColumnStart == styleFood.gridColumnStart && style.gridRowStart == styleFood.gridRowStart) {
         generateFood();
     }
-    if(x > 25 || y > 25 || x < 0 || y < 0) {
+
+    if(x > 50 || y > 50 || x < 0 || y < 0) {
         resetSnake(snake);
+        
     }
 }

@@ -2,7 +2,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
-const { playerJoin, getPlayers, playerLeave } = require('./utils/player');
+const { playerJoin, getPlayers, playerLeave, getPlayer } = require('./utils/player');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,13 +18,14 @@ io.on('connection', socket => {
             players: getPlayers()
         })
     })
+
+    io.emit('getPlayer', { player: getPlayer(socket.id) })
     
     socket.on('movePlayer', ({ direction }) => {
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
-
+    
     socket.on('disconnect', () => {
-        console.log("DISCONNECT")
         playerLeave(socket.id);
         io.emit('updatePlayers', {
             players: getPlayers()

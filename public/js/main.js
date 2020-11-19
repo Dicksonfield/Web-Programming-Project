@@ -7,7 +7,8 @@ const styleCanvas = getComputedStyle(canvas);
 let id = "";
 const player = false;
 const boardSize = 70;
-let score = 0;
+let score = 1;
+const scoreEl = document.getElementById('score');
 
 socket.emit('joinGame', { name: "Jason" });
 
@@ -84,6 +85,7 @@ const resetSnake = (snake) => {
 
     //Compare with database high score
     score = 1;
+    scoreEl.innerHTML = score;
 }
 
 const outputMove = (direction, id) => {
@@ -125,7 +127,7 @@ const outputMove = (direction, id) => {
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
         score++;
-        console.log(score);
+        scoreEl.innerHTML = score;
         generateFood();
     }
 

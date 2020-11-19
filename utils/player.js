@@ -8,6 +8,14 @@ const playerJoin = (id, name) => {
     return user
 }
 
+const updatePosition = (id, positions) => {
+    if(id) {
+        const player = players.find(player => player.id == id);
+        player.snake = positions;
+    }
+    
+}
+
 const playerLeave = (id) => {
     const player = players.find(player => player.id == id);
     if(player) {
@@ -22,7 +30,6 @@ const getPlayers = () => {
 }
 
 const getPlayer = (id) => {
-    console.log(players.find(player => player.id == id))
     return players.find(player => player.id == id);
 }
 
@@ -30,5 +37,6 @@ module.exports = {
     playerJoin,
     getPlayers,
     playerLeave,
-    getPlayer
+    getPlayer,
+    updatePosition
 };

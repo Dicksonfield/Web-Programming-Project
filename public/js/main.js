@@ -1,7 +1,5 @@
 const socket = io();
 const canvas = document.getElementById('canvas');
-// const snakes = document.getElementById('snakes');
-// const foods = document.getElementById('foods');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";

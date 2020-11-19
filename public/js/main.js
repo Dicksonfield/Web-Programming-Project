@@ -5,8 +5,9 @@ const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
-let player = false;
+const player = false;
 const boardSize = 70;
+let score = 0;
 
 socket.emit('joinGame', { name: "Jason" });
 
@@ -18,20 +19,18 @@ socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
 })
 
-socket.on('getPlayer', ({playerData}) => {
-    player = playerData
-})
+// socket.on('getPlayer', ({player}) => {
+//     player = player
+// })
 
-let food_x = 1;
-let foox_y = 1;
 
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    food_x = Math.floor(Math.random() * boardSize);
-    food_y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = food_x
-    food.style.gridColumnStart = food_y
+    const x = Math.floor(Math.random() * boardSize);
+    const y = Math.floor(Math.random() * boardSize);
+    food.style.gridRowStart = x
+    food.style.gridColumnStart = y
     food.id = "food";
 }
 
@@ -54,16 +53,15 @@ const outputPlayers = players => {
     let food = document.createElement("div");
     food.id = "food"
     food.className = "food"
-    food.style.gridRowStart = food_x;
-    food.style.gridColumnStart = food_y;
+    const x = Math.floor(Math.random() * boardSize);
+    const y = Math.floor(Math.random() * boardSize);
+    food.style.gridRowStart = x;
+    food.style.gridColumnStart = y;
     canvas.appendChild(food);
 }
 
 document.addEventListener("keydown", (e) => {
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
-        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
-            return false;
-        }
         direction = e.code;
     }
 });
@@ -72,7 +70,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 50);
 
 const resetSnake = (snake) => {
     // Fix resetting snake at same location for all players
@@ -81,9 +79,11 @@ const resetSnake = (snake) => {
     }
     const x = Math.floor(Math.random() * boardSize);
     const y = Math.floor(Math.random() * boardSize);
-    snake[0].style.gridRowStart = x;
-    snake[0].style.gridColumnStart = y;
-    generateFood();
+    snake[0].style.gridRowStart = 20;
+    snake[0].style.gridColumnStart = 20;
+
+    //Compare with database high score
+    score = 1;
 }
 
 const outputMove = (direction, id) => {
@@ -124,6 +124,8 @@ const outputMove = (direction, id) => {
         snakePart.style.gridRowStart = snake_copy[snake_copy.length - 1].row;
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
+        score++;
+        console.log(score);
         generateFood();
     }
 
@@ -134,10 +136,7 @@ const outputMove = (direction, id) => {
     }
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
-        resetSnake(snake);   
+        resetSnake(snake);
+        
     }
-
-    snake = document.querySelectorAll(`[data-id='${id}']`);
-    positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
-    socket.emit('updatePosition', { id, positions });
 }

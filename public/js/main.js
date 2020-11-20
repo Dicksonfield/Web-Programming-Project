@@ -3,7 +3,7 @@ const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
-const player = false;
+let player = false;
 const boardSize = 70;
 let score = 1;
 const scoreEl = document.getElementById('score');
@@ -18,18 +18,19 @@ socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
 })
 
-// socket.on('getPlayer', ({player}) => {
-//     player = player
-// })
+socket.on('getPlayer', ({playerData}) => {
+    player = playerData
+})
 
-
+let food_x = 1;
+let foox_y = 1;
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = x
-    food.style.gridColumnStart = y
+    food_x = Math.floor(Math.random() * boardSize);
+    food_y = Math.floor(Math.random() * boardSize);
+    food.style.gridRowStart = food_x
+    food.style.gridColumnStart = food_y
     food.id = "food";
 }
 
@@ -52,15 +53,17 @@ const outputPlayers = players => {
     let food = document.createElement("div");
     food.id = "food"
     food.className = "food"
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = x;
-    food.style.gridColumnStart = y;
+    food.style.gridRowStart = food_x;
+    food.style.gridColumnStart = food_y;
     canvas.appendChild(food);
 }
 
 document.addEventListener("keydown", (e) => {
+    console.log(player)
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
+            return false;
+        }
         direction = e.code;
     }
 });
@@ -69,7 +72,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 50);
+}, 100);
 
 const resetSnake = (snake) => {
     // Fix resetting snake at same location for all players
@@ -78,8 +81,9 @@ const resetSnake = (snake) => {
     }
     const x = Math.floor(Math.random() * boardSize);
     const y = Math.floor(Math.random() * boardSize);
-    snake[0].style.gridRowStart = 20;
-    snake[0].style.gridColumnStart = 20;
+    snake[0].style.gridRowStart = x;
+    snake[0].style.gridColumnStart = y;
+    generateFood();
 
     //Compare with database high score
     score = 1;
@@ -137,6 +141,9 @@ const outputMove = (direction, id) => {
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);
-        
     }
+
+    snake = document.querySelectorAll(`[data-id='${id}']`);
+    positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
+    socket.emit('updatePosition', { id, positions });
 }

@@ -6,7 +6,9 @@ let id = "";
 const player = false;
 const boardSize = 70;
 let score = 1;
+let highScore = 1;
 const scoreEl = document.getElementById('score');
+const highEl = document.getElementById('high_score');
 
 socket.emit('joinGame', { name: "Jason" });
 
@@ -126,6 +128,9 @@ const outputMove = (direction, id) => {
         canvas.appendChild(snakePart)
         score++;
         scoreEl.innerHTML = score;
+        if(score > highScore){
+            highEl.innerHTML = score;
+            highScore = score; }
         generateFood();
     }
 

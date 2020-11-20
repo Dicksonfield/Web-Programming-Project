@@ -1,8 +1,8 @@
 let players = [];
 
 const playerJoin = (id, name) => {
-    const x = Math.floor(Math.random() * 70);
-    const y = Math.floor(Math.random() * 70);
+    const x = Math.floor(Math.random() * 50);
+    const y = Math.floor(Math.random() * 50);
     const user = { id, name, snake: [{x, y}]}
     players.push(user);
     return user

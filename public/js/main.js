@@ -29,11 +29,34 @@ let foox_y = 1;
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    food_x = Math.floor(Math.random() * boardSize);
-    food_y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = food_x
-    food.style.gridColumnStart = food_y
+    food_x, food_y = foodValidation();
+
+    food.style.gridRowStart = food_x;
+    food.style.gridColumnStart = food_y;
     food.id = "food";
+}
+
+const foodValidation = () => {
+    allSnakes = document.querySelectorAll(".snake");
+    food_x = selectPos();
+    food_y = selectPos();
+
+    for(i=0; i<allSnakes.length;i++){
+        while(food_x == allSnakes[i].gridRowStart | food_y == allSnakes[i].gridColumnStart){
+            food_x = selectPos();
+            food_y = selectPos();
+        }
+    }
+    while(food_x == 0 | food_y == 0){
+        food_x = selectPos();
+        food_y = selectPos();
+    }
+
+    return food_x, food_y;
+}
+
+function selectPos (){
+    return Math.floor(Math.random() * boardSize);
 }
 
 generateFood();

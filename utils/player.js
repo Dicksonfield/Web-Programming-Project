@@ -1,8 +1,8 @@
 let players = [];
 
 const playerJoin = (id, name) => {
-    const x = Math.floor(Math.random() * 50);
-    const y = Math.floor(Math.random() * 50);
+    const x = Math.floor(Math.random() * 49) + 1;
+    const y = Math.floor(Math.random() * 49) + 1;
     const user = { id, name, snake: [{x, y}]}
     players.push(user);
     return user
@@ -13,7 +13,6 @@ const updatePosition = (id, positions) => {
         const player = players.find(player => player.id == id);
         player.snake = positions;
     }
-    
 }
 
 const playerLeave = (id) => {
@@ -21,7 +20,6 @@ const playerLeave = (id) => {
     if(player) {
         players = players.filter(player => player.id != id);
     }
-
     return player;
 }
 

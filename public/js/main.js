@@ -25,7 +25,7 @@ socket.on('getPlayer', ({playerData}) => {
 })
 
 let food_x = 1;
-let foox_y = 1;
+let food_y = 1;
 
 const generateFood = () => {
     const food = document.getElementById("food");
@@ -37,17 +37,11 @@ const generateFood = () => {
 }
 
 const foodValidation = () => {
-    allSnakes = document.querySelectorAll(".snake");
     food_x = selectPos();
     food_y = selectPos();
-
-    for(i=0; i<allSnakes.length;i++){
-        while(food_x == allSnakes[i].gridRowStart | food_y == allSnakes[i].gridColumnStart){
-            food_x = selectPos();
-            food_y = selectPos();
-        }
-    }
-    while(food_x == 0 | food_y == 0){
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(".snake")).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    while(snake_positions.some(item => item.row == food_x && item.column == food_y)) {
+        console.log("FOOD INSIDE SNAKE")
         food_x = selectPos();
         food_y = selectPos();
     }
@@ -56,7 +50,7 @@ const foodValidation = () => {
 }
 
 function selectPos (){
-    return Math.floor(Math.random() * boardSize);
+    return Math.floor(Math.random() * (boardSize - 1) + 1);
 }
 
 generateFood();
@@ -84,7 +78,6 @@ const outputPlayers = players => {
 }
 
 document.addEventListener("keydown", (e) => {
-    console.log(player)
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
         if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
             return false;
@@ -97,7 +90,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 50);
 
 const resetSnake = (snake) => {
     // Fix resetting snake at same location for all players

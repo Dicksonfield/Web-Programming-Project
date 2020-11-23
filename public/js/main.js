@@ -10,6 +10,11 @@ let highScore = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
 
+if(document.cookie == undefined){
+    const uuid = Date.now();
+    document.cookie = uuid;
+}
+
 socket.emit('joinGame', { name: "Jason" });
 
 socket.on('updatePlayers', ({ players }) => {

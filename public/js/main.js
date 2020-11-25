@@ -195,7 +195,7 @@ const outputMove = (direction, id) => {
         visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 200px)`
     } else if (snake.length < 11) {
         visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 100px)`
-    } else if (snake.length > 11) {
+    } else if (snake.length >= 11) {
         visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 75px)`
     }
     

@@ -1,4 +1,5 @@
 const socket = io();
+
 const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
@@ -11,6 +12,13 @@ const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
 
 socket.emit('joinGame', { name: "Jason" });
+
+console.log(document.cookie);
+if(document.cookie == undefined){
+    const uuid = Date.now();
+    console.log(uuid);
+    document.cookie = uuid;
+}
 
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)

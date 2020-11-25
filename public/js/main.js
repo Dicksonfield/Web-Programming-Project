@@ -6,16 +6,27 @@ let id = "";
 let player = false;
 const boardSize = 50;
 let score = 1;
-let highScore = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
+let params = new URLSearchParams(location.search);
+const playerName = params.get('name');
 
-if(document.cookie == undefined){
-    const uuid = Date.now();
-    document.cookie = uuid;
-}
+socket.emit('joinGame', { name: playerName, cookie: document.cookie });
+socket.on('setCookie', ({ cookie }) => {
+    document.cookie = cookie;
+})
 
-socket.emit('joinGame', { name: "Jason" });
+socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
+    highScore = dbHighScore;
+    totalEaten = dbTotalEaten;
+    highEl.innerHTML = highScore;
+})
+
+//get leaderboard
+socket.emit("requestLeaderboard");
+socket.on("sendLeaderboard", ({leaderboard}) => {
+    if(leaderboard.length > 100) leaderboard.slice(0,100);
+});
 
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
@@ -98,6 +109,10 @@ setInterval(() => {
 }, 50);
 
 const resetSnake = (snake) => {
+    //On Death Update high score
+    let temp = document.cookie;
+    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
+
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {
         snake[i].remove();
@@ -152,6 +167,7 @@ const outputMove = (direction, id) => {
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
         score++;
+        totalEaten++;
         scoreEl.innerHTML = score;
         if(score > highScore){
             highEl.innerHTML = score;

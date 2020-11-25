@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     browser: {
-        type: Number,
+        type: String,
         required: true
     },
     user: {
@@ -13,7 +13,7 @@ const userSchema = new Schema({
     },
     highScore: {
         type: Number,
-        default: 0,
+        default: 1,
         required: true
     },
     totalEaten: {

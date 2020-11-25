@@ -10,6 +10,48 @@ const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+const mongoose = require("mongoose");
+const url = "mongodb+srv://test:dicksonfield@cluster0.ujlvn.mongodb.net/userData?retryWrites=true&w=majority";
+mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => server.listen(3000))
+    .catch((err) => console.log(err));
+const User = require("./models/stats");
+const { Console } = require('console');
+
+const userAdd = ( name, id ) => {
+    const addUser = new User({
+        browser: id,
+        user: name,
+    });
+    addUser.save()
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
+app.get("/leaderboard", (req,res) => {
+    User.find().sort({ highScore: -1 })
+        .then((result) => {
+            res.send(result[0])
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+app.get("/get-user", (req,res) => {
+    User.findOne({
+        browser: 0,
+    })
+        .then((result) => {
+            res.send(result);
+            console.log(result)
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
 io.on('connection', socket => {
     socket.on('joinGame', ({ name }) => {
         playerJoin(socket.id, name);
@@ -31,10 +73,6 @@ io.on('connection', socket => {
         })
         io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     })
-
-    
-
-    
     
     socket.on('disconnect', () => {
         playerLeave(socket.id);
@@ -43,7 +81,3 @@ io.on('connection', socket => {
         })
     });
 });
-
-
-
-server.listen(3000);

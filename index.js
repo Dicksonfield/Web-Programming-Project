@@ -8,7 +8,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const biri = require('biri')
 const mongoose = require("mongoose");
 const url = "mongodb+srv://test:dicksonfield@cluster0.ujlvn.mongodb.net/userData?retryWrites=true&w=majority";
 mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })

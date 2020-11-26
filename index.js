@@ -4,6 +4,8 @@ const express = require('express');
 const socketio = require('socket.io');
 const { playerJoin, getPlayers, playerLeave, getPlayer, updatePosition } = require('./utils/player');
 
+const uuid = require("uuid");
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -16,46 +18,14 @@ mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
 const User = require("./models/stats");
 const { Console } = require('console');
 
-const userAdd = ( name, id ) => {
-    const addUser = new User({
-        browser: id,
-        user: name,
-    });
-    addUser.save()
-        .catch((err) => {
-            console.log(err);
-        });
-}
-
-app.get("/leaderboard", (req,res) => {
-    User.find().sort({ highScore: -1 })
-        .then((result) => {
-            res.send(result[0])
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-});
-
-app.get("/get-user", (req,res) => {
-    User.findOne({
-        browser: 0,
-    })
-        .then((result) => {
-            res.send(result);
-            console.log(result)
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
-    socket.on('joinGame', ({ name }) => {
+    
+    socket.on('joinGame', ({ name, cookie }) => {
         playerJoin(socket.id, name);
-        userAdd(name, Date.now());
+        databaseHandle(name,cookie);
 
         io.emit('updatePlayers', {
             players: getPlayers()
@@ -81,4 +51,62 @@ io.on('connection', socket => {
             players: getPlayers()
         })
     });
+
+
+    const databaseHandle = (name,cookie) => {
+        User.findOne({
+            browser: cookie,
+        })
+            .then((result) => {
+                if(result == null){
+                    const playerID = uuid.v4();
+                    newUser(name, playerID);
+                    setTimeout(() => { databaseHandle(name,playerID); }, 1000);
+                }
+                else{
+                    socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten}); }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        
+        }
+
+    const newUser = (name, playerID) => {
+        console.log("new");
+        socket.emit('setCookie', { cookie: playerID });
+        const addUser = new User({
+            browser: playerID,
+            user: name,
+            });
+        addUser.save()
+        .catch((err) => {
+            console.log(err);
+            });
+    }
+
+    socket.on('updateStats', ({cookie, dbHS, dbTE}) => {
+        User.findOne({
+            browser: cookie,
+        })
+            .then((result) => {
+                result.highScore = dbHS;
+                result.totalEaten = dbTE;
+                result.save();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    });
+    
+
+    socket.on('requestLeaderboard', () => {
+        User.find().sort({ highScore: -1 })
+        .then((result) => {
+            socket.emit("sendLeaderboard", {leaderboard: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    })
 });

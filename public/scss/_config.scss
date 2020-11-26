@@ -11,4 +11,7 @@ body {
     align-items: center;
     background-color: rgb(21, 21, 21);
   }
+  &.mainPage {
+    background-color: rgb(48, 173, 48);}
+    //background-image: url("");
 }

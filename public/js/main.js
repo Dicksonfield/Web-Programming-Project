@@ -10,6 +10,8 @@ let score = 1;
 let highScore = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
+const visionObj = {1: "1000px", 10: "800px", 20: "600px", 30: "500px", 40: "400px", 50: "300px", 60: "200px", 70: "150px", 80: "100px", 90: "75px", 100: "50px" }
+let currentVision = 1;
 
 if(document.cookie == undefined){
     const uuid = Date.now();
@@ -184,20 +186,10 @@ const outputMove = (direction, id) => {
 
     // Fix this not running per client
     const visionOverlay = document.getElementById("vision-overlay");
-    if(snake.length < 3) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 1000px)`
+    if (snake.length in visionObj) {
+        currentVision = visionObj[snake.length];
     }
-    else if(snake.length < 5) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 400px)`
-    } else if (snake.length < 7) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 300px)`
-    } else if (snake.length < 9) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 200px)`
-    } else if (snake.length < 11) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 100px)`
-    } else if (snake.length >= 11) {
-        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 75px)`
-    }
+    visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * (100 / boardSize))-1}% ${(snake[0].style.gridRowStart * (100 / boardSize))-1}%,transparent 10px,rgba(0, 0, 0, 0.96) ${currentVision})`
     
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {

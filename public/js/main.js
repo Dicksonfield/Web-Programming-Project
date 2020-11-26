@@ -1,14 +1,42 @@
 const socket = io();
+
 const canvas = document.getElementById('canvas');
-// const snakes = document.getElementById('snakes');
-// const foods = document.getElementById('foods');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
 let id = "";
-const player = false;
-const boardSize = 70;
+let player = false;
+const boardSize = 50;
+let score = 1;
+const scoreEl = document.getElementById('score');
+const highEl = document.getElementById('high_score');
+const visionObj = {1: "1000px", 10: "800px", 20: "600px", 30: "500px", 40: "400px", 50: "300px", 60: "200px", 70: "150px", 80: "100px", 90: "75px", 100: "50px" }
+let currentVision = 1;
+let params = new URLSearchParams(location.search);
+const playerName = params.get('name');
 
-socket.emit('joinGame', { name: "Jason" });
+socket.emit('joinGame', { name: playerName, cookie: document.cookie });
+socket.on('setCookie', ({ cookie }) => {
+    document.cookie = cookie;
+})
+
+socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
+    highScore = dbHighScore;
+    totalEaten = dbTotalEaten;
+    highEl.innerHTML = highScore;
+})
+
+//get leaderboard
+socket.emit("requestLeaderboard");
+socket.on("sendLeaderboard", ({leaderboard}) => {
+    if(leaderboard.length > 100) leaderboard.slice(0,100);
+});
+
+console.log(document.cookie);
+if(document.cookie == undefined){
+    const uuid = Date.now();
+    console.log(uuid);
+    document.cookie = uuid;
+}
 
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
@@ -18,19 +46,38 @@ socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
 })
 
-// socket.on('getPlayer', ({player}) => {
-//     player = player
-// })
+socket.on('getPlayer', ({playerData}) => {
+    player = playerData
+})
 
 
+let food_x = 1;
+let food_y = 1;
 
 const generateFood = () => {
     const food = document.getElementById("food");
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = x
-    food.style.gridColumnStart = y
+    food_x, food_y = foodValidation();
+
+    food.style.gridRowStart = food_x;
+    food.style.gridColumnStart = food_y;
     food.id = "food";
+}
+
+const foodValidation = () => {
+    food_x = selectPos();
+    food_y = selectPos();
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(".snake")).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    while(snake_positions.some(item => item.row == food_x && item.column == food_y)) {
+        console.log("FOOD INSIDE SNAKE")
+        food_x = selectPos();
+        food_y = selectPos();
+    }
+
+    return food_x, food_y;
+}
+
+function selectPos (){
+    return Math.floor(Math.random() * (boardSize - 1) + 1);
 }
 
 generateFood();
@@ -52,15 +99,16 @@ const outputPlayers = players => {
     let food = document.createElement("div");
     food.id = "food"
     food.className = "food"
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = x;
-    food.style.gridColumnStart = y;
+    food.style.gridRowStart = food_x;
+    food.style.gridColumnStart = food_y;
     canvas.appendChild(food);
 }
 
 document.addEventListener("keydown", (e) => {
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
+            return false;
+        }
         direction = e.code;
     }
 });
@@ -72,14 +120,23 @@ setInterval(() => {
 }, 50);
 
 const resetSnake = (snake) => {
+    //On Death Update high score
+    let temp = document.cookie;
+    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
+
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {
         snake[i].remove();
     }
     const x = Math.floor(Math.random() * boardSize);
     const y = Math.floor(Math.random() * boardSize);
-    snake[0].style.gridRowStart = 20;
-    snake[0].style.gridColumnStart = 20;
+    snake[0].style.gridRowStart = x;
+    snake[0].style.gridColumnStart = y;
+    generateFood();
+
+    //Compare with database high score
+    score = 1;
+    scoreEl.innerHTML = score;
 }
 
 const outputMove = (direction, id) => {
@@ -120,6 +177,12 @@ const outputMove = (direction, id) => {
         snakePart.style.gridRowStart = snake_copy[snake_copy.length - 1].row;
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
+        score++;
+        totalEaten++;
+        scoreEl.innerHTML = score;
+        if(score > highScore){
+            highEl.innerHTML = score;
+            highScore = score; }
         generateFood();
     }
 
@@ -129,8 +192,27 @@ const outputMove = (direction, id) => {
         }
     }
 
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    for(i=0; i < snake_positions.length; i++) {
+        if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
+            resetSnake(snake);
+            console.log("Reset Snake")
+        }
+    }
+
+    // Fix this not running per client
+    const visionOverlay = document.getElementById("vision-overlay");
+    if (snake.length in visionObj) {
+        currentVision = visionObj[snake.length];
+    }
+    visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * (100 / boardSize))-1}% ${(snake[0].style.gridRowStart * (100 / boardSize))-1}%,transparent 10px,rgba(0, 0, 0, 0.96) ${currentVision})`
+    
+
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);
-        
     }
+
+    snake = document.querySelectorAll(`[data-id='${id}']`);
+    positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
+    socket.emit('updatePosition', { id, positions });
 }

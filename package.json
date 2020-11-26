@@ -10,8 +10,12 @@
   "author": "Dicksonfield",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.10.15",
+    "socket.io": "^2.3.0",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2",

@@ -1,4 +1,5 @@
 const socket = io();
+
 const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
@@ -6,11 +7,36 @@ let id = "";
 let player = false;
 const boardSize = 50;
 let score = 1;
-let highScore = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
+const visionObj = {1: "1000px", 10: "800px", 20: "600px", 30: "500px", 40: "400px", 50: "300px", 60: "200px", 70: "150px", 80: "100px", 90: "75px", 100: "50px" }
+let currentVision = 1;
+let params = new URLSearchParams(location.search);
+const playerName = params.get('name');
 
-socket.emit('joinGame', { name: "Jason" });
+socket.emit('joinGame', { name: playerName, cookie: document.cookie });
+socket.on('setCookie', ({ cookie }) => {
+    document.cookie = cookie;
+})
+
+socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
+    highScore = dbHighScore;
+    totalEaten = dbTotalEaten;
+    highEl.innerHTML = highScore;
+})
+
+//get leaderboard
+socket.emit("requestLeaderboard");
+socket.on("sendLeaderboard", ({leaderboard}) => {
+    if(leaderboard.length > 100) leaderboard.slice(0,100);
+});
+
+console.log(document.cookie);
+if(document.cookie == undefined){
+    const uuid = Date.now();
+    console.log(uuid);
+    document.cookie = uuid;
+}
 
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
@@ -23,6 +49,7 @@ socket.on('movePlayer', ({ direction, id }) => {
 socket.on('getPlayer', ({playerData}) => {
     player = playerData
 })
+<<<<<<< HEAD
 
 let food_x = 1;
 let foox_y = 1;
@@ -33,7 +60,37 @@ const generateFood = () => {
     food_y = Math.floor(Math.random() * boardSize);
     food.style.gridRowStart = food_x
     food.style.gridColumnStart = food_y
+=======
+
+
+let food_x = 1;
+let food_y = 1;
+
+const generateFood = () => {
+    const food = document.getElementById("food");
+    food_x, food_y = foodValidation();
+
+    food.style.gridRowStart = food_x;
+    food.style.gridColumnStart = food_y;
+>>>>>>> master
     food.id = "food";
+}
+
+const foodValidation = () => {
+    food_x = selectPos();
+    food_y = selectPos();
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(".snake")).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    while(snake_positions.some(item => item.row == food_x && item.column == food_y)) {
+        console.log("FOOD INSIDE SNAKE")
+        food_x = selectPos();
+        food_y = selectPos();
+    }
+
+    return food_x, food_y;
+}
+
+function selectPos (){
+    return Math.floor(Math.random() * (boardSize - 1) + 1);
 }
 
 generateFood();
@@ -77,6 +134,10 @@ setInterval(() => {
 }, 100);
 
 const resetSnake = (snake) => {
+    //On Death Update high score
+    let temp = document.cookie;
+    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
+
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {
         snake[i].remove();
@@ -131,6 +192,10 @@ const outputMove = (direction, id) => {
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
         score++;
+<<<<<<< HEAD
+=======
+        totalEaten++;
+>>>>>>> master
         scoreEl.innerHTML = score;
         if(score > highScore){
             highEl.innerHTML = score;
@@ -143,6 +208,22 @@ const outputMove = (direction, id) => {
             resetSnake(snake);
         }
     }
+
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    for(i=0; i < snake_positions.length; i++) {
+        if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
+            resetSnake(snake);
+            console.log("Reset Snake")
+        }
+    }
+
+    // Fix this not running per client
+    const visionOverlay = document.getElementById("vision-overlay");
+    if (snake.length in visionObj) {
+        currentVision = visionObj[snake.length];
+    }
+    visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * (100 / boardSize))-1}% ${(snake[0].style.gridRowStart * (100 / boardSize))-1}%,transparent 10px,rgba(0, 0, 0, 0.96) ${currentVision})`
+    
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);

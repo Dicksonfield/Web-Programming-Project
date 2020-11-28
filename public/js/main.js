@@ -1,4 +1,5 @@
 const socket = io();
+
 const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
@@ -28,6 +29,13 @@ socket.on("sendLeaderboard", ({leaderboard}) => {
     if(leaderboard.length > 100) leaderboard.slice(0,100);
 });
 
+console.log(document.cookie);
+if(document.cookie == undefined){
+    const uuid = Date.now();
+    console.log(uuid);
+    document.cookie = uuid;
+}
+
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
 })
@@ -39,6 +47,7 @@ socket.on('movePlayer', ({ direction, id }) => {
 socket.on('getPlayer', ({playerData}) => {
     player = playerData
 })
+
 
 let food_x = 1;
 let food_y = 1;
@@ -180,6 +189,32 @@ const outputMove = (direction, id) => {
             resetSnake(snake);
         }
     }
+
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    for(i=0; i < snake_positions.length; i++) {
+        if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
+            resetSnake(snake);
+            console.log("Reset Snake")
+        }
+    }
+
+    // Fix this not running per client
+    const visionOverlay = document.getElementById("vision-overlay");
+    if(snake.length < 3) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 1000px)`
+    }
+    else if(snake.length < 5) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 400px)`
+    } else if (snake.length < 7) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 300px)`
+    } else if (snake.length < 9) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 200px)`
+    } else if (snake.length < 11) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 100px)`
+    } else if (snake.length >= 11) {
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * 2)-1}% ${(snake[0].style.gridRowStart * 2)-1}%,transparent 10px,rgba(0, 0, 0, 0.945) 75px)`
+    }
+    
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);

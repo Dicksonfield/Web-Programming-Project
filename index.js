@@ -10,8 +10,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 const mongoose = require("mongoose");
 const url = "mongodb+srv://test:dicksonfield@cluster0.ujlvn.mongodb.net/userData?retryWrites=true&w=majority";
 mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
@@ -20,6 +18,8 @@ mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
 const User = require("./models/stats");
 const { Console } = require('console');
 
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
     

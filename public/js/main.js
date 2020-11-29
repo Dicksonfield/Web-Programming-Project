@@ -14,9 +14,9 @@ let currentVision = 1;
 let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
 
-socket.emit('joinGame', { name: playerName, cookie: document.cookie });
+socket.emit('joinGame', { name: playerName, cookie: localStorage.getItem('snakeID') });
 socket.on('setCookie', ({ cookie }) => {
-    document.cookie = cookie;
+    localStorage.setItem('snakeID',cookie);
 })
 
 socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
@@ -25,17 +25,11 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
     highEl.innerHTML = highScore;
 })
 
-//get leaderboard
-socket.emit("requestLeaderboard");
-socket.on("sendLeaderboard", ({leaderboard}) => {
-    if(leaderboard.length > 100) leaderboard.slice(0,100);
-});
-
-console.log(document.cookie);
-if(document.cookie == undefined){
+if(localStorage.getItem('snakeID') == null){
+    console.log("null");
     const uuid = Date.now();
     console.log(uuid);
-    document.cookie = uuid;
+    localStorage.setItem('snakeID',uuid);
 }
 
 socket.on('updatePlayers', ({ players }) => {
@@ -122,7 +116,7 @@ setInterval(() => {
 
 const resetSnake = (snake) => {
     //On Death Update high score
-    let temp = document.cookie;
+    let temp = localStorage.getItem('snakeID');;
     socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
 
     // Fix resetting snake at same location for all players

@@ -25,12 +25,6 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
     highEl.innerHTML = highScore;
 })
 
-//get leaderboard
-socket.emit("requestLeaderboard");
-socket.on("sendLeaderboard", ({leaderboard}) => {
-    if(leaderboard.length > 100) leaderboard.slice(0,100);
-});
-
 if(localStorage.getItem('snakeID') == null){
     console.log("null");
     const uuid = Date.now();

@@ -98,15 +98,4 @@ io.on('connection', socket => {
                 console.log(err);
             });
     });
-    
-
-    socket.on('requestLeaderboard', () => {
-        User.find().sort({ highScore: -1 })
-        .then((result) => {
-            socket.emit("sendLeaderboard", {leaderboard: result});
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    })
 });

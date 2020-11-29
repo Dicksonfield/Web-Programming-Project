@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 function makeTableHTML(myArray) {
 
     let result = "<table border=1>";
@@ -8,17 +7,13 @@ function makeTableHTML(myArray) {
 
     for(let i=0; i<highscore.length; i++) {
 
-        result += "<tr>";
-
-
-       
+        result += "<tr> <td>name[i]</td> <td>score[0]</td> </tr>";       
 
     }
 
     result += "</table>";
     return result;
 }
-=======
 //Client
 
 const socket = io();
@@ -29,4 +24,3 @@ socket.on("sendLeaderboard", ({leaderboard}) => {
 });
 
 console.log(leaderboard);
->>>>>>> e51f7a2cc26ba46a077b3973d555d67aafec02ca

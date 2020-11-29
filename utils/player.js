@@ -13,10 +13,6 @@ const updatePosition = (id, positions) => {
         const player = players.find(player => player.id == id);
         player.snake = positions;
     }
-<<<<<<< HEAD
-    
-=======
->>>>>>> master
 }
 
 const playerLeave = (id) => {

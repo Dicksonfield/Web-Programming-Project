@@ -3,11 +3,8 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const { playerJoin, getPlayers, playerLeave, getPlayer, updatePosition } = require('./utils/player');
-<<<<<<< HEAD
-=======
 
 const uuid = require("uuid");
->>>>>>> master
 
 const app = express();
 const server = http.createServer(app);

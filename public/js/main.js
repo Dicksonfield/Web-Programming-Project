@@ -49,18 +49,6 @@ socket.on('movePlayer', ({ direction, id }) => {
 socket.on('getPlayer', ({playerData}) => {
     player = playerData
 })
-<<<<<<< HEAD
-
-let food_x = 1;
-let foox_y = 1;
-
-const generateFood = () => {
-    const food = document.getElementById("food");
-    food_x = Math.floor(Math.random() * boardSize);
-    food_y = Math.floor(Math.random() * boardSize);
-    food.style.gridRowStart = food_x
-    food.style.gridColumnStart = food_y
-=======
 
 
 let food_x = 1;
@@ -72,7 +60,6 @@ const generateFood = () => {
 
     food.style.gridRowStart = food_x;
     food.style.gridColumnStart = food_y;
->>>>>>> master
     food.id = "food";
 }
 
@@ -131,7 +118,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 50);
 
 const resetSnake = (snake) => {
     //On Death Update high score
@@ -192,10 +179,7 @@ const outputMove = (direction, id) => {
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
         score++;
-<<<<<<< HEAD
-=======
         totalEaten++;
->>>>>>> master
         scoreEl.innerHTML = score;
         if(score > highScore){
             highEl.innerHTML = score;

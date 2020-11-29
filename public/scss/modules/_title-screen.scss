@@ -21,38 +21,29 @@ padding: 20px 40px;
 min-width: 500px;
 
 
-input[type=text] {
-    width: 100%;
-    padding: 10px 15px;
-    &:focus{
-      outline:none;
+  .btn-container{
+
+    display:flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    
+    .btn{
+      border:none;
+      font-family: 'Courier New', Courier, monospace;;
+      font-size: 15px;
+      background-color: gray;
+      color: rgb(255, 255, 255);
+      padding: 10px;
+      text-decoration: none;
+      width: 45%;
+      text-align: center;
+      transition: 0.5s ease-in-out background-color;
+      cursor: pointer;
+      &:hover{
+      background-color: darken(grey, 10%);
+      }
+    
     }
   }
 
-
-.btn-container{
-
-  display:flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  
-  .btn{
-    border:none;
-    //margin:0px 10px;
-    background-color: gray;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    width: 45%;
-    text-align: center;
-    transition: 0.5s ease-in-out background-color;
-    cursor: pointer;
-    &:hover{
-    background-color: darken(grey, 10%);
-    }
-  
-  }
 }
-
-}
-

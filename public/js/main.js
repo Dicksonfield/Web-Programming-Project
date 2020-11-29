@@ -105,6 +105,7 @@ const outputPlayers = players => {
 }
 
 document.addEventListener("keydown", (e) => {
+    console.log(player)
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
         if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
             return false;

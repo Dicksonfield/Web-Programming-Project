@@ -6,7 +6,6 @@
 
 body {
   
-  
   &.gamePage {
     height: 100vh;
     width: 100vw;
@@ -23,7 +22,17 @@ body {
     background-color: #cccccc;;
     height: 100vh;
     display: flex;
-  justify-content: center;
-  align-items: center;
+    justify-content: center;
+    align-items: center;
+    }
+  &.leaderboardPage {
+    background-image: url('/images/snake_reptile.jpg');
+    background-size: cover;
+    background-position: bottom;
+    background-color: #c46262;;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     }
 } 

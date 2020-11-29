@@ -99,7 +99,6 @@ io.on('connection', socket => {
             });
     });
     
-
     socket.on('requestLeaderboard', () => {
         User.find().sort({ highScore: -1 })
         .then((result) => {
@@ -107,6 +106,6 @@ io.on('connection', socket => {
         })
         .catch((err) => {
             console.log(err);
-        });
+        });                                                            
     })
 });

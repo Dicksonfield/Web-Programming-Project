@@ -1,3 +1,5 @@
+const socket = io();
+
 function makeTableHTML(myArray) {
 
     let result = "<table border=1>";
@@ -14,13 +16,8 @@ function makeTableHTML(myArray) {
     result += "</table>";
     return result;
 }
-//Client
-
-const socket = io();
 
 socket.emit("requestLeaderboard");
 socket.on("sendLeaderboard", ({leaderboard}) => {
     if(leaderboard.length > 100) leaderboard.slice(0,100);
 });
-
-console.log(leaderboard);

@@ -25,13 +25,6 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
     highEl.innerHTML = highScore;
 })
 
-if(localStorage.getItem('snakeID') == null){
-    console.log("null");
-    const uuid = Date.now();
-    console.log(uuid);
-    localStorage.setItem('snakeID',uuid);
-}
-
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
 })

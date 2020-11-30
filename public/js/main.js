@@ -110,7 +110,7 @@ setInterval(() => {
 const resetSnake = (snake) => {
     //On Death Update high score
     let temp = localStorage.getItem('snakeID');;
-    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
+    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: (totalEaten+score)})
 
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {

@@ -24,6 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 io.on('connection', socket => {
     
     socket.on('joinGame', ({ name, cookie }) => {
+        /* socket.on("join_room",room => {
+            socket.join(room);
+        }); */
+
         playerJoin(socket.id, name);
         databaseHandle(name,cookie);
 
@@ -51,7 +55,6 @@ io.on('connection', socket => {
             players: getPlayers()
         })
     });
-
 
     const databaseHandle = (name,cookie) => {
         User.findOne({
@@ -110,4 +113,5 @@ io.on('connection', socket => {
             console.log(err);
         });                                                            
     })
+
 });

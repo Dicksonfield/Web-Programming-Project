@@ -64,7 +64,7 @@ io.on('connection', socket => {
                     setTimeout(() => { databaseHandle(name,playerID); }, 1000);
                 }
                 else{
-                    socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten}); }
+                    socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten, dbWins: result.wins}); }
             })
             .catch((err) => {
                 console.log(err);
@@ -85,13 +85,15 @@ io.on('connection', socket => {
             });
     }
 
-    socket.on('updateStats', ({cookie, dbHS, dbTE}) => {
+    socket.on('updateStats', ({updateName, cookie, dbHS, dbTE, dbW}) => {
         User.findOne({
             browser: cookie,
         })
             .then((result) => {
+                result.user = updateName;
                 result.highScore = dbHS;
                 result.totalEaten = dbTE;
+                result.wins = dbW;
                 result.save();
             })
             .catch((err) => {

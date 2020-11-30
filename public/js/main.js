@@ -19,9 +19,10 @@ socket.on('setCookie', ({ cookie }) => {
     localStorage.setItem('snakeID',cookie);
 })
 
-socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
+socket.on("sendStats", ({dbHighScore, dbTotalEaten, dbWins}) => {
     highScore = dbHighScore;
     totalEaten = dbTotalEaten;
+    wins = dbWins;
     highEl.innerHTML = highScore;
 })
 
@@ -110,7 +111,10 @@ setInterval(() => {
 const resetSnake = (snake) => {
     //On Death Update high score
     let temp = localStorage.getItem('snakeID');;
-    socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: (totalEaten+score)})
+    let TEupdate = totalEaten;
+    if(score > 1) TEupdate += (score-1);
+
+    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
 
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {

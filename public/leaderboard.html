@@ -12,27 +12,23 @@
 
     <h2>LEADERBOARD</h2>
 
-        <div class ="leaderboard">
-            <table class="leaderboard__table">
-                <tr>
-                    <th>Nickname</th>
-                    <th>Highscore</th>
-                </tr>
-                <tr>
-                    <td>Jack</td>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <td>Jill</td>
-                    <td>34</td>
-                </tr>
+    <div class ="leaderboard">
+        <div class = "table-container">
+            
+            <table class="leaderboard__table" id ="leaderboard">
+
             </table>
 
-            <a class = "leaderboard__btn" href = "index.html">Go to main menu</a>
+            
             
         </div>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="./js/leaderboard-client.js"></script>
+
+        <a class = "leaderboard__btn" href = "index.html">Go to main menu</a>
+    </div>
+
+        
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/leaderboard-client.js"></script>
 </body>
-    
 </html>

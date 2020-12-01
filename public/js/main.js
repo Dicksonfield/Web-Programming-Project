@@ -118,7 +118,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 100);
+}, 2000);
 
 const resetSnake = (snake) => {
     //On Death Update high score

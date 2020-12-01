@@ -131,6 +131,9 @@ const resetSnake = (snake) => {
 
     let vision = document.getElementById("vision-overlay");
     vision.style.display = "none";
+
+    let gameOver = document.getElementById("overlay");
+    gameOver.style.display ="flex";
 }
 
 const outputMove = (direction, id) => {

@@ -50,3 +50,17 @@
   z-index: 2;
   background-color: transparent;
 }
+
+#overlay{
+  @extend #canvas;
+  z-index:3;
+  position: absolute;
+  background-color: rgba(36, 22, 37, 0.381);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;;
+  font-size: 32px;
+  display: none;
+}
+

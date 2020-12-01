@@ -13,7 +13,7 @@ const io = socketio(server);
 const mongoose = require("mongoose");
 const url = "mongodb+srv://test:dicksonfield@cluster0.ujlvn.mongodb.net/userData?retryWrites=true&w=majority";
 mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => server.listen(3000))
+    .then(() => server.listen(process.env.PORT || 3000))
     .catch((err) => console.log(err));
 const User = require("./models/stats");
 const { Console } = require('console');

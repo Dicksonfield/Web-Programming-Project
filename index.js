@@ -18,17 +18,29 @@ mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
 const User = require("./models/stats");
 const { Console } = require('console');
 
+var rooms = [];
+let roomID = 0;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
     
     socket.on('joinGame', ({ name, cookie }) => {
-        /* socket.on("join_room",room => {
-            socket.join(room);
-        }); */
+        socket.join(roomID);
+        playerJoin(socket.id, name, roomID);
+        room = rooms.find(item => item.id == roomID);
+        if (room == null) {
+            const room = {id: roomID,started: false,players:1}
+            rooms.push(room)
+        } 
+        else {
+            room.players++;
+            if(room.players == 2){
+                room.started = true;
+                roomID++;
+            }
+        }
 
-        playerJoin(socket.id, name);
         databaseHandle(name,cookie);
 
         io.emit('updatePlayers', {
@@ -50,10 +62,18 @@ io.on('connection', socket => {
     })
     
     socket.on('disconnect', () => {
-        playerLeave(socket.id);
-        io.emit('updatePlayers', {
-            players: getPlayers()
-        })
+        const player = playerLeave(socket.id);
+        if(player){
+            io.emit('updatePlayers', {
+                players: getPlayers()
+            })
+            socket.leave(player.roomID);
+            room = rooms.find(item => item.id == player.roomID);
+            room.players--;
+            if(room.players == 0){
+                rooms = rooms.filter(item => item.id != player.roomID);
+            }
+        }
     });
 
     const databaseHandle = (name,cookie) => {
@@ -76,7 +96,6 @@ io.on('connection', socket => {
         }
 
     const newUser = (name, playerID) => {
-        console.log("new");
         socket.emit('setCookie', { cookie: playerID });
         const addUser = new User({
             browser: playerID,
@@ -97,6 +116,19 @@ io.on('connection', socket => {
                 result.highScore = dbHS;
                 result.totalEaten = dbTE;
                 result.wins = dbW;
+                result.save();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    });
+
+    socket.on('addWin', ({cookie, dbW}) => {
+        User.findOne({
+            browser: cookie,
+        })
+            .then((result) => {
+                result.wins += 1;
                 result.save();
             })
             .catch((err) => {

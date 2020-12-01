@@ -13,6 +13,15 @@ const visionObj = {1: "1000px", 10: "800px", 20: "600px", 30: "500px", 40: "400p
 let currentVision = 1;
 let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
+const button = document.getElementById('exit');
+
+button.addEventListener('click', () => {
+    window.location = "/";
+    let temp = localStorage.getItem('snakeID');;
+    let TEupdate = totalEaten;
+    if(score > 1) TEupdate += (score-1);
+    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+  });
 
 socket.emit('joinGame', { name: playerName, cookie: localStorage.getItem('snakeID') });
 socket.on('setCookie', ({ cookie }) => {
@@ -37,7 +46,6 @@ socket.on('movePlayer', ({ direction, id }) => {
 socket.on('getPlayer', ({playerData}) => {
     player = playerData
 })
-
 
 let food_x = 1;
 let food_y = 1;
@@ -117,21 +125,19 @@ const resetSnake = (snake) => {
     socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
 
     // Fix resetting snake at same location for all players
-    for(i=1; i<snake.length; i++) {
+    for(i=0; i<snake.length; i++) {
         snake[i].remove();
     }
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    snake[0].style.gridRowStart = x;
-    snake[0].style.gridColumnStart = y;
-    generateFood();
 
-    //Compare with database high score
-    score = 1;
-    scoreEl.innerHTML = score;
+    let vision = document.getElementById("vision-overlay");
+    vision.style.display = "none";
 }
 
 const outputMove = (direction, id) => {
+    //if(document.querySelectorAll(".snake") = snake.length){
+      //  console.log(playerName + " Wins!")
+    //}
+    
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 

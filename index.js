@@ -18,17 +18,33 @@ mongoose.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true })
 const User = require("./models/stats");
 const { Console } = require('console');
 
+var rooms = [];
+let roomID = 0;
+var id=1;
+var colorhexadecimal;
+const colors = ['orange','green','red','purple','yellow','magenta',];
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
     
     socket.on('joinGame', ({ name, cookie }) => {
-        /* socket.on("join_room",room => {
-            socket.join(room);
-        }); */
+        socket.join(roomID);
+        playerJoin(socket.id, name, roomID);
+        room = rooms.find(item => item.id == roomID);
+        if (room == null) {
+            const room = {id: roomID,started: false,players:1}
+            rooms.push(room)
+        } 
+        else {
+            room.players++;
+            if(room.players == 2){
+                room.started = true;
+                roomID++;
+            }
+        }
+        console.log(rooms);
 
-        playerJoin(socket.id, name);
         databaseHandle(name,cookie);
 
         io.emit('updatePlayers', {
@@ -37,6 +53,21 @@ io.on('connection', socket => {
         io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     })
     
+    io.on('connection', function(socket) {
+        console.log("user "+id+" connected");
+        console.log(colors[id]);
+        socket.emit('colorEvent', colors);
+        if(id >=1 && id<= 4 ){
+             colors[id];
+          } else {
+             colors[0];
+          }
+          id++;
+    })
+
+    socket.emit('colorEvent', colorhexadecimal);
+
+
     socket.on('movePlayer', ({ direction }) => {
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
@@ -50,10 +81,19 @@ io.on('connection', socket => {
     })
     
     socket.on('disconnect', () => {
-        playerLeave(socket.id);
+        console.log('A user disconnected');
+        const player = playerLeave(socket.id);
         io.emit('updatePlayers', {
             players: getPlayers()
         })
+        socket.leave(player.roomID);
+        room = rooms.find(item => item.id == player.roomID);
+        room.players--;
+        if(room.players == 0){
+            rooms = rooms.filter(item => item.id != player.roomID);
+        }
+        console.log(rooms);
+        console.log(getPlayers());
     });
 
     const databaseHandle = (name,cookie) => {

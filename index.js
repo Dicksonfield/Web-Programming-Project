@@ -86,8 +86,12 @@ io.on('connection', socket => {
                     newUser(name, playerID);
                     setTimeout(() => { databaseHandle(name,playerID); }, 1000);
                 }
+                
                 else{
                     socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten, dbWins: result.wins}); }
+
+                    const playerID = uuid.v4();
+                    newUser("Test_95", playerID);
             })
             .catch((err) => {
                 console.log(err);

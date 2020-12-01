@@ -1,10 +1,12 @@
 h1 {
   color: white;
   text-align: center;
+  font-family: monospace;
   margin-bottom: 30px;
   font-size: 64px;
 }
 p {
+  font-family: verdana;
   font-size: 20px;
   text-align: center;
 }
@@ -21,7 +23,6 @@ p {
   input[type="text"] {
     width: 100%;
     padding: 10px 15px;
-
     &:focus {
       outline: none;
     }
@@ -34,10 +35,10 @@ p {
 
     .btn {
       border: none;
-      font-size: 16px;
-      //margin:0px 10px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 15px;
       background-color: gray;
-      color: white;
+      color: rgb(255, 255, 255);
       padding: 10px;
       text-decoration: none;
       width: 45%;

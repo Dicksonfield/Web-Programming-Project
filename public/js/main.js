@@ -12,30 +12,27 @@ const visionObj = {1: "1000px", 10: "800px", 20: "600px", 30: "500px", 40: "400p
 let currentVision = 1;
 let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
+const button = document.getElementById('exit');
 
-socket.emit('joinGame', { name: playerName, cookie: document.cookie });
+button.addEventListener('click', () => {
+    window.location = "/";
+    let temp = localStorage.getItem('snakeID');;
+    let TEupdate = totalEaten;
+    if(score > 1) TEupdate += (score-1);
+    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+  });
+
+socket.emit('joinGame', { name: playerName, cookie: localStorage.getItem('snakeID') });
 socket.on('setCookie', ({ cookie }) => {
-    document.cookie = cookie;
+    localStorage.setItem('snakeID',cookie);
 })
 
-socket.on("sendStats", ({dbHighScore, dbTotalEaten}) => {
+socket.on("sendStats", ({dbHighScore, dbTotalEaten, dbWins}) => {
     highScore = dbHighScore;
     totalEaten = dbTotalEaten;
+    wins = dbWins;
     highEl.innerHTML = highScore;
 })
-
-//get leaderboard
-socket.emit("requestLeaderboard");
-socket.on("sendLeaderboard", ({leaderboard}) => {
-    if(leaderboard.length > 100) leaderboard.slice(0,100);
-});
-
-console.log(document.cookie);
-if(document.cookie == undefined){
-    const uuid = Date.now();
-    console.log(uuid);
-    document.cookie = uuid;
-}
 
 socket.on('updatePlayers', ({ players }) => {
     outputPlayers(players)
@@ -51,7 +48,6 @@ socket.on('getPlayer', ({playerData}) => {
     }
     
 })
-
 
 let food_x = 1;
 let food_y = 1;
@@ -107,6 +103,7 @@ const outputPlayers = players => {
 }
 
 document.addEventListener("keydown", (e) => {
+    console.log(player)
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
         let snake = document.querySelectorAll(`[data-id='${player.id}']`)
         if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && snake.length > 1) {
@@ -124,6 +121,13 @@ setInterval(() => {
 }, 100);
 
 const resetSnake = (snake) => {
+    //On Death Update high score
+    let temp = localStorage.getItem('snakeID');;
+    let TEupdate = totalEaten;
+    if(score > 1) TEupdate += (score-1);
+
+    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+
     // Fix resetting snake at same location for all players
     for(i=1; i<snake.length; i++) {
         snake[i].remove();

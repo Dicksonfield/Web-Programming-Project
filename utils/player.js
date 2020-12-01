@@ -1,9 +1,9 @@
 let players = [];
 
-const playerJoin = (id, name) => {
+const playerJoin = (id, name, roomID) => {
     const x = Math.floor(Math.random() * 49) + 1;
     const y = Math.floor(Math.random() * 49) + 1;
-    const user = { id, name, snake: [{x, y}]}
+    const user = { id, name, snake: [{x, y}], roomID}
     players.push(user);
     return user
 }

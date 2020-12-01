@@ -118,7 +118,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 2000);
+}, 200);
 
 const resetSnake = (snake) => {
     //On Death Update high score
@@ -152,6 +152,7 @@ const resetSnake = (snake) => {
 }
 
 const outputMove = (direction, id) => {
+    
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 

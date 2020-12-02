@@ -49,31 +49,16 @@
   background-color: transparent;
 }
 
-/* Portrait */
-@media screen and (orientation: portrait) {
-  #canvas {
-    width: 95vw;
-    height: 95vw;
-    outline: 5px solid rgb(255, 255, 255);
-  }
-  .score,
-  .high_score {
-    font-size: 20px;
-  }
-  .high_score {
-    top: 35px;
-  }
-  .exit {
-    img {
-      width: 30px;
-      height: 30px;
-    }
-  }
+#overlay{
+  @extend #canvas;
+  z-index:3;
+  position: absolute;
+  background-color: rgba(36, 22, 37, 0.381);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;;
+  font-size: 32px;
+  display: none;
 }
-/* Landscape */
-@media screen and (orientation: landscape) {
-  #canvas {
-    width: 95vh;
-    height: 95vh;
-  }
-}
+

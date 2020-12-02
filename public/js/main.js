@@ -99,7 +99,12 @@ generateFood();
 
 const outputPlayers = (players, x, y) => {
     canvas.innerHTML = "";
-    
+    if(players.length == 1) {
+        overlay.style.display ="flex";
+        overlay.innerHTML = "Waiting on another player to join...";
+    } else {
+        overlay.style.display ="none";
+    }
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -231,7 +236,7 @@ const outputMove = (direction, id) => {
     
     let food = document.getElementById("food");
     let styleFood = getComputedStyle(food);
-
+      
 
     if(style.gridColumnStart == styleFood.gridColumnStart && style.gridRowStart == styleFood.gridRowStart) {
         let snakePart = document.createElement("div");
@@ -241,12 +246,15 @@ const outputMove = (direction, id) => {
         snakePart.style.gridRowStart = snake_copy[snake_copy.length - 1].row;
         snakePart.style.gridColumnStart = snake_copy[snake_copy.length - 1].column;
         canvas.appendChild(snakePart)
-        score++;
-        totalEaten++;
-        scoreEl.innerHTML = score;
-        if(score > highScore){
-            highEl.innerHTML = score;
-            highScore = score; }
+        if(player.id == id) {
+            score++;
+            totalEaten++;
+            scoreEl.innerHTML = score;
+            if(score > highScore){
+                highEl.innerHTML = score;
+                highScore = score; }
+        }
+        
 
         socket.emit('generateFood', currentRoom.id)
     }

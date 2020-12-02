@@ -99,12 +99,12 @@ generateFood();
 
 const outputPlayers = (players, x, y) => {
     canvas.innerHTML = "";
-    if(players.length == 1) {
-        overlay.style.display ="flex";
-        overlay.innerHTML = "Waiting on another player to join...";
-    } else {
-        overlay.style.display ="none";
-    }
+    // if(players.length == 1) {
+    //     overlay.style.display ="flex";
+    //     overlay.innerHTML = "Waiting on another player to join...";
+    // } else {
+    //     overlay.style.display ="none";
+    // }
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -285,8 +285,5 @@ const outputMove = (direction, id) => {
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);
     }
-
-    snake = document.querySelectorAll(`[data-id='${id}']`);
-    positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
     // socket.emit('updatePosition', { id, positions });
 }

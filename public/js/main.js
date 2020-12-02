@@ -60,8 +60,6 @@ socket.on('getPlayer', ({playerData}) => {
     
 })
 
-
-
 const generateFood = () => {
     console.log(food_x, food_y)
     const food = document.getElementById("food");
@@ -152,8 +150,6 @@ const resetSnake = (snake) => {
     snake[0].style.gridColumnStart = y;
 
     if(player.id == id) {
-        generateFood();
-
         //On Death Update high score
         let temp = document.cookie;
         socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})

@@ -15,6 +15,7 @@ const playerName = params.get('name');
 const button = document.getElementById('exit');
 let roomID = -1;
 let currentRoom = {};
+const overlay = document.getElementById("overlay");
 
 button.addEventListener('click', () => {
     window.location = "/";
@@ -173,6 +174,7 @@ const resetSnake = (snake) => {
 
         let gameOver = document.getElementById("overlay");
         gameOver.style.display ="flex";
+        overlay.innerHTML = "GAME OVER";
     }
     
 }
@@ -188,6 +190,8 @@ const winner = (id) => {
             let TEupdate = totalEaten;
             if(score > 1) TEupdate += (score-1);
             socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
+            overlay.style.display = "flex";
+            overlay.innerHTML = "WINNER!";
         }
     }
 }

@@ -233,5 +233,5 @@ const outputMove = (direction, id) => {
 
     snake = document.querySelectorAll(`[data-id='${id}']`);
     positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
-    socket.emit('updatePosition', { id, positions });
+    // socket.emit('updatePosition', { id, positions });
 }

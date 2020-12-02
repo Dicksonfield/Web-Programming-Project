@@ -99,12 +99,12 @@ generateFood();
 
 const outputPlayers = (players, x, y) => {
     canvas.innerHTML = "";
-    // if(players.length == 1) {
-    //     overlay.style.display ="flex";
-    //     overlay.innerHTML = "Waiting on another player to join...";
-    // } else {
-    //     overlay.style.display ="none";
-    // }
+    if(players.length == 1) {
+        overlay.style.display ="flex";
+        overlay.innerHTML = "Waiting on another player to join...";
+    } else {
+        overlay.style.display ="none";
+    }
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -155,6 +155,7 @@ for (i = 0; i < mobileMovement.length; i++) {
 setInterval(() => { 
     if(direction != null && currentRoom.started) {
         socket.emit('movePlayer', {direction, room: player.roomID})
+        console.log(currentRoom)
     }
 }, 200);
 
@@ -189,8 +190,8 @@ const winner = (id) => {
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     if((document.querySelectorAll(".snake").length == snake.length || document.querySelectorAll(".snake").length == 1) && currentRoom.started){
         if(player.id == snake[0].getAttribute("data-id")){
-            currentRoom.started = false;
             console.log("winner")
+            currentRoom.started = false;
             let temp = localStorage.getItem('snakeID');;
             let TEupdate = totalEaten;
             if(score > 1) TEupdate += (score-1);
@@ -207,6 +208,7 @@ const outputMove = (direction, id) => {
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 
     if(snake.length == 0) {
+        currentRoom.started = false;
         return false;
     }
     winner(id)

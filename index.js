@@ -60,6 +60,8 @@ io.on('connection', socket => {
     })
     
     socket.on('movePlayer', ({ direction, room }) => {
+        console.log(rooms)
+        console.log(getPlayers(room))
         
         io.to(room).emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
@@ -77,14 +79,6 @@ io.on('connection', socket => {
             foodEaten = false;
         }, 2000);
     })
-
-    // socket.on('updatePosition', (obj) => {
-    //     updatePosition(obj.id, obj.positions)
-    //     io.emit('updatePlayers', {
-    //         players: getPlayers()
-    //     })
-    //     io.emit('getPlayer', { playerData: getPlayer(socket.id) })
-    // })
 
     socket.on('disconnect', () => {
         const player = playerLeave(socket.id);

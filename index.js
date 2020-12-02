@@ -37,7 +37,6 @@ io.on('connection', socket => {
         playerJoin(socket.id, name, roomID);
         if (room == null) {
             room = {id: roomID,started: false,players:1}
-            console.log(room)
             rooms.push(room)
         } 
         else {
@@ -49,29 +48,30 @@ io.on('connection', socket => {
         }
 
         databaseHandle(name,cookie);
-        console.log(room)
-        io.emit('updatePlayers', {
-            players: getPlayers(),
+        io.to(room.id).emit('updatePlayers', {
+            players: getPlayers(room.id),
             x,
             y,
-            room
+            room,
+            roomID
         })
-        io.emit('getPlayer', { playerData: getPlayer(socket.id) })
+        io.to(room.id).emit('getPlayer', { playerData: getPlayer(socket.id) })
     })
     
-    socket.on('movePlayer', ({ direction }) => {
+    socket.on('movePlayer', ({ direction, room }) => {
         
-        io.emit('movePlayer', ({ direction: direction, id: socket.id }))
+        io.to(room).emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
 
-    socket.on('generateFood', () => {
+    socket.on('generateFood', (room) => {
+        console.log(room)
         if(foodEaten == false) {
             x = selectPos();
             y = selectPos();
         }
         foodEaten = true;
         console.log(x, y)
-        io.emit('generateFood', ({x, y}))
+        io.to(room).emit('generateFood', ({x, y}))
         setInterval(() => { 
             foodEaten = false;
         }, 2000);
@@ -84,15 +84,21 @@ io.on('connection', socket => {
     //     })
     //     io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     // })
-    
+
     socket.on('disconnect', () => {
         const player = playerLeave(socket.id);
         if(player){
-            io.emit('updatePlayers', {
-                players: getPlayers()
+            room = rooms.find(item => item.id == player.roomID);
+            io.to(player.roomID).emit('updatePlayers', {
+                players: getPlayers(player.roomID),
+                x,
+                y,
+                room,
+                roomID: room.id
+                
             })
             socket.leave(player.roomID);
-            room = rooms.find(item => item.id == player.roomID);
+            
             room.players--;
             if(room.players == 0){
                 rooms = rooms.filter(item => item.id != player.roomID);

@@ -37,7 +37,7 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten, dbWins}) => {
     highEl.innerHTML = highScore;
 })
 
-socket.on('updatePlayers', ({ players, x, y, room }) => {
+socket.on('updatePlayers', ({ players, x, y, room, roomID }) => {
     outputPlayers(players, x, y)
     currentRoom = room;
 })
@@ -66,7 +66,6 @@ socket.on('getPlayer', ({playerData}) => {
 })
 
 const generateFood = () => {
-    console.log(food_x, food_y)
     const food = document.getElementById("food");
     
     food.style.gridRowStart = food_x;
@@ -94,6 +93,7 @@ generateFood();
 
 const outputPlayers = (players, x, y) => {
     canvas.innerHTML = "";
+    
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -105,7 +105,11 @@ const outputPlayers = (players, x, y) => {
             canvas.appendChild(snake)
         })
     }
-
+    if(players.length == 1 && currentRoom.started) {
+        snake = document.querySelectorAll(`[data-id='${players[0].id}']`)
+        winner(snake);
+    }
+    
     let food = document.createElement("div");
     food.id = "food"
     food.className = "food"
@@ -137,7 +141,7 @@ for (i = 0; i < mobileMovement.length; i++) {
 setInterval(() => { 
 
     if(direction != null && currentRoom.started) {
-        socket.emit('movePlayer', {direction})
+        socket.emit('movePlayer', {direction, room: player.roomID})
     }
 }, 100);
 
@@ -163,14 +167,10 @@ const resetSnake = (snake) => {
     
 }
 
-const outputMove = (direction, id) => {
-    
-    let snake = document.querySelectorAll(`[data-id='${id}']`)
-    let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 
+const winner = (snake) => {
     if((document.querySelectorAll(".snake").length == snake.length || document.querySelectorAll(".snake").length == 1) && currentRoom.started){
-        if(player.id = id){
-            console.log("Winner");
+        if(player.id == snake[0].getAttribute("data-id")){
             currentRoom.started = false;
             let temp = localStorage.getItem('snakeID');;
             let TEupdate = totalEaten;
@@ -178,6 +178,14 @@ const outputMove = (direction, id) => {
             socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
         }
     }
+}
+
+const outputMove = (direction, id) => {
+    
+    let snake = document.querySelectorAll(`[data-id='${id}']`)
+    let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
+    winner(snake);
+    
 
     for(i=1; i<snake.length; i++) {
         snake[i].style.gridRowStart = snake_copy[i - 1].row;
@@ -221,7 +229,7 @@ const outputMove = (direction, id) => {
             highEl.innerHTML = score;
             highScore = score; }
 
-        socket.emit('generateFood')
+        socket.emit('generateFood', currentRoom.id)
     }
 
     for(i=1; i < snake_copy.length - 1; i++) {

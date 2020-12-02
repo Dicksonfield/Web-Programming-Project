@@ -23,8 +23,8 @@ const playerLeave = (id) => {
     return player;
 }
 
-const getPlayers = () => {
-    return players;
+const getPlayers = (room) => {
+    return players.filter(player => player.roomID == room);
 }
 
 const getPlayer = (id) => {

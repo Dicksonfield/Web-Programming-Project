@@ -153,7 +153,11 @@ const resetSnake = (snake) => {
 
 const outputMove = (direction, id) => {
     
+
     let snake = document.querySelectorAll(`[data-id='${id}']`)
+    if(!snake) {
+        return false;
+    }
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 
     for(i=1; i<snake.length; i++) {

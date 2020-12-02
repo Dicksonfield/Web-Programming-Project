@@ -5,14 +5,14 @@ const styleCanvas = getComputedStyle(canvas);
 let id = "";
 let player = false;
 //sets size of grid
-const boardSize = 40;
+const boardSize = 30;
 
 //initialises score
 let score = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
 //initialises the vision mechanic object values (at what sizes to change size)
-const visionObj = {1: "800px", 4: "700px", 8: "600px", 12: "500px", 16: "400px", 20: "300px", 24: "200px", 28: "150px", 32: "100px", 36: "75px", 40: "50px" }
+const visionObj = {1: "75px", 4: "100px", 8: "125px", 12: "150px", 16: "200px", 20: "300px", 24: "400px", 28: "500px", 32: "600px", 36: "700px", 40: "800px" }
 let currentVision = 1;
 let params = new URLSearchParams(location.search);
 //gets the players name from URL paramater

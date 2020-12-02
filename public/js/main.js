@@ -5,7 +5,7 @@ const styleCanvas = getComputedStyle(canvas);
 let id = "";
 let player = false;
 //sets size of grid
-const boardSize = 50;
+const boardSize = 40;
 
 //initialises score
 let score = 1;
@@ -182,7 +182,7 @@ setInterval(() => {
         socket.emit('movePlayer', {direction, room: player.roomID})
         console.log(currentRoom)
     }
-}, 200);
+}, 100);
 
 
 //snake has died

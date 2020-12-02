@@ -8,7 +8,7 @@ socket.on("sendLeaderboard", ({leaderboard}) => {
 function makeTable(name){
 
     let result = "";
-    result = "<table><th>Place</th> <th>Name</th> <th style='cursor:pointer' onclick='highScoreSort();'>Highscore</th> <th style='cursor:pointer' onclick='totalEatenSort();'>Total Eaten</th> <th style='cursor:pointer' onclick='winsSort();'>Wins</th>";
+    result = "<table><th>Place</th> <th>Name</th> <th style='cursor:pointer' onclick='highScoreSort();'>Highscore ▼ </th> <th style='cursor:pointer' onclick='totalEatenSort();'>Total Eaten ▼ </th> <th style='cursor:pointer' onclick='winsSort();'>Wins ▼ </th>";
 
     for(let i=0; i<name.length; i++) {
 

@@ -151,7 +151,7 @@ setInterval(() => {
     if(direction != null && currentRoom.started) {
         socket.emit('movePlayer', {direction, room: player.roomID})
     }
-}, 100);
+}, 75);
 
 const resetSnake = (snake) => {
 

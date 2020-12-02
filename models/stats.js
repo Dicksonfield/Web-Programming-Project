@@ -1,7 +1,9 @@
+//Import mongoose
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+//Creates schema template for creation of monogodb database document
 const userSchema = new Schema({
     browser: {
         type: String,
@@ -28,5 +30,6 @@ const userSchema = new Schema({
     }
 }, { timestamps: true });
 
+//Creates schema model
 const User = mongoose.model("User", userSchema);
 module.exports = User;

@@ -140,6 +140,7 @@ io.on('connection', socket => {
             });
     });
     
+    // default (highScore) sort
     socket.on('requestLeaderboard', () => {
         User.find().sort({ highScore: -1 })
         .then((result) => {
@@ -150,4 +151,25 @@ io.on('connection', socket => {
         });                                                            
     })
 
+    // totalEaten sort
+    socket.on('requestLeaderboardTotalEaten', () => {
+        User.find().sort({ totalEaten: -1 })
+        .then((result) => {
+            socket.emit("sendLeaderboard", {leaderboard: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });                                                            
+    })
+
+    // wins sort
+    socket.on('requestLeaderboardWins', () => {
+        User.find().sort({ wins: -1 })
+        .then((result) => {
+            socket.emit("sendLeaderboard", {leaderboard: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });                                                            
+    })
 });

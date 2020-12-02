@@ -14,6 +14,7 @@ let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
 const button = document.getElementById('exit');
 let roomID = -1;
+let currentRoom = {};
 
 button.addEventListener('click', () => {
     window.location = "/";
@@ -36,8 +37,9 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten, dbWins}) => {
     highEl.innerHTML = highScore;
 })
 
-socket.on('updatePlayers', ({ players, x, y }) => {
+socket.on('updatePlayers', ({ players, x, y, room }) => {
     outputPlayers(players, x, y)
+    currentRoom = room;
 })
 
 let food_x = 1;
@@ -113,13 +115,16 @@ const outputPlayers = (players, x, y) => {
 }
 
 document.addEventListener("keydown", (e) => {
-    if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
-        let snake = document.querySelectorAll(`[data-id='${player.id}']`)
-        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && snake.length > 1) {
-            return false;
+    if(currentRoom.started) {
+        if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+            let snake = document.querySelectorAll(`[data-id='${player.id}']`)
+            if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && snake.length > 1) {
+                return false;
+            }
+            direction = e.code;
         }
-        direction = e.code;
     }
+    
 });
 
 const mobileMovement = document.querySelectorAll(".mobileMovement");

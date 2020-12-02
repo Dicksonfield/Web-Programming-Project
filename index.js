@@ -36,23 +36,25 @@ io.on('connection', socket => {
         room = rooms.find(item => item.id == roomID);
         playerJoin(socket.id, name, roomID);
         if (room == null) {
-            const room = {id: roomID,started: false,players:1}
+            room = {id: roomID,started: false,players:1}
+            console.log(room)
             rooms.push(room)
         } 
         else {
             room.players++;
-            if(room.players == 4){
+            if(room.players == 2){
                 room.started = true;
                 roomID++;
             }
         }
 
         databaseHandle(name,cookie);
-
+        console.log(room)
         io.emit('updatePlayers', {
             players: getPlayers(),
             x,
-            y
+            y,
+            room
         })
         io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     })

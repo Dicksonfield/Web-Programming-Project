@@ -204,8 +204,8 @@ const outputMove = (direction, id) => {
             resetSnake(snake);
         }
     }
-
     
+    console.log(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`))
     let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
     for(i=0; i < snake_positions.length; i++) {
         if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {

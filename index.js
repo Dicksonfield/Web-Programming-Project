@@ -61,6 +61,7 @@ io.on('connection', socket => {
         io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     })
     
+    
     socket.on('disconnect', () => {
         const player = playerLeave(socket.id);
         if(player){

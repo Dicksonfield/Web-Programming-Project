@@ -114,6 +114,13 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+const mobileMovement = document.querySelectorAll(".mobileMovement");
+for (i = 0; i < mobileMovement.length; i++) {
+    mobileMovement[i].addEventListener('click', (e) => {
+      direction = e.target.getAttribute("data-move")
+    });
+  }
+
 setInterval(() => { 
     if(direction != null) {
         socket.emit('movePlayer', {direction})

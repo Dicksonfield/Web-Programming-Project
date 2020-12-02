@@ -53,13 +53,13 @@ io.on('connection', socket => {
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
 
-    // socket.on('updatePosition', (obj) => {
-    //     updatePosition(obj.id, obj.positions)
-    //     io.emit('updatePlayers', {
-    //         players: getPlayers()
-    //     })
-    //     io.emit('getPlayer', { playerData: getPlayer(socket.id) })
-    // })
+    socket.on('updatePosition', (obj) => {
+        updatePosition(obj.id, obj.positions)
+        io.emit('updatePlayers', {
+            players: getPlayers()
+        })
+        io.emit('getPlayer', { playerData: getPlayer(socket.id) })
+    })
     
     socket.on('disconnect', () => {
         const player = playerLeave(socket.id);

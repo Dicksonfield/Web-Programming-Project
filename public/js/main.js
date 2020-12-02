@@ -81,6 +81,7 @@ generateFood();
 
 const outputPlayers = players => {
     canvas.innerHTML = "";
+    console.log(players)
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -120,7 +121,8 @@ for (i = 0; i < mobileMovement.length; i++) {
 
 setInterval(() => { 
     if(direction != null) {
-        socket.emit('movePlayer', {direction})
+        // socket.emit('movePlayer', {direction})
+        outputMove(direction, player.id)
     }
 }, 100);
 
@@ -158,15 +160,11 @@ const resetSnake = (snake) => {
 const outputMove = (direction, id) => {
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
-    console.log(direction, id)
-    if(snake.length == 0) {
-        return false;
-    }
+
     for(i=1; i<snake.length; i++) {
         snake[i].style.gridRowStart = snake_copy[i - 1].row;
         snake[i].style.gridColumnStart = snake_copy[i - 1].column;
     }
-    
     let style = getComputedStyle(snake[0]);
     let x = parseInt(style.gridRowStart);
     let y = parseInt(style.gridColumnStart);
@@ -213,7 +211,7 @@ const outputMove = (direction, id) => {
     }
 
     
-    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake`)).map(snakeItem => snakeItem.getAttribute("data-id") != id && ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
     for(i=0; i < snake_positions.length; i++) {
         if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
             resetSnake(snake);
@@ -235,5 +233,5 @@ const outputMove = (direction, id) => {
 
     snake = document.querySelectorAll(`[data-id='${id}']`);
     positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
-    // socket.emit('updatePosition', { id, positions });
+    socket.emit('updatePosition', { id, positions });
 }

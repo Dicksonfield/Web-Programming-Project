@@ -61,6 +61,11 @@ socket.on('getPlayer', ({playerData}) => {
     if (!player) {
         player = playerData
         roomID = player.roomID;
+        let snake = document.querySelectorAll(`[data-id='${player.id}']`)
+        console.log(snake)
+        for(let i=0; i<snake.length; i++) {
+            snake[i].className = "snake current-snake"
+        }
     }
     
 })
@@ -99,6 +104,9 @@ const outputPlayers = (players, x, y) => {
             let snake = document.createElement("div");
             snake.id = "snake";
             snake.className = "snake"
+            if(player && player.id == players[i].id) {
+                snake.className="snake current-snake"
+            }
             snake.setAttribute('data-id', players[i].id);
             snake.style.gridRowStart = snakePart.x;
             snake.style.gridColumnStart = snakePart.y;

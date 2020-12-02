@@ -1,4 +1,7 @@
 #snake {
   background-color: rgb(75, 75, 75);
   border: 2px solid rgb(0, 0, 0);
+  &.current-snake {
+    background-color: orange;
+  }
 }

@@ -53,7 +53,8 @@ io.on('connection', socket => {
             x,
             y,
             room,
-            roomID
+            roomID,
+            currentPlayer: getPlayer(socket.id)
         })
         io.to(room.id).emit('getPlayer', { playerData: getPlayer(socket.id) })
     })

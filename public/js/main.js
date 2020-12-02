@@ -12,7 +12,7 @@ let score = 1;
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high_score');
 //initialises the vision mechanic object values (at what sizes to change size)
-const visionObj = {1: "75px", 4: "100px", 8: "125px", 12: "150px", 16: "200px", 20: "300px", 24: "400px", 28: "500px", 32: "600px", 36: "700px", 40: "800px" }
+const visionObj = {1: "200px", 5: "300px", 10: "400px", 15: "500px", 20: "600px", 25: "700px", 30: "800px" }
 let currentVision = 1;
 let params = new URLSearchParams(location.search);
 //gets the players name from URL paramater

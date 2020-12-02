@@ -55,7 +55,7 @@
   @extend #canvas;
   z-index:3;
   position: absolute;
-  background-color: rgba(36, 22, 37, 0.381);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.6));
   display: flex;
   justify-content: center;
   align-items: center;

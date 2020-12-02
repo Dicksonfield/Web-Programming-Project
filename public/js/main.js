@@ -167,15 +167,16 @@ const outputMove = (direction, id) => {
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 
-    // if(document.querySelectorAll(".snake").length == snake.length){
-    //     if(player.id = id){
-    //         console.log("Winner");
-    //         let temp = localStorage.getItem('snakeID');;
-    //         let TEupdate = totalEaten;
-    //         if(score > 1) TEupdate += (score-1);
-    //         socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
-    //     }
-    // }
+    if((document.querySelectorAll(".snake").length == snake.length || document.querySelectorAll(".snake").length == 1) && currentRoom.started){
+        if(player.id = id){
+            console.log("Winner");
+            currentRoom.started = false;
+            let temp = localStorage.getItem('snakeID');;
+            let TEupdate = totalEaten;
+            if(score > 1) TEupdate += (score-1);
+            socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
+        }
+    }
 
     for(i=1; i<snake.length; i++) {
         snake[i].style.gridRowStart = snake_copy[i - 1].row;

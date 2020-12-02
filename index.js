@@ -52,6 +52,7 @@ io.on('connection', socket => {
     socket.on('movePlayer', ({ direction }) => {
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
+    
 
     socket.on('updatePosition', (obj) => {
         updatePosition(obj.id, obj.positions)

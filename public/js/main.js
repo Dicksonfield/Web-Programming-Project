@@ -118,7 +118,7 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 2000);
+}, 200);
 
 const resetSnake = (snake) => {
     //On Death Update high score
@@ -209,8 +209,7 @@ const outputMove = (direction, id) => {
         }
     }
     
-    console.log(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`))
-    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake`)).map(snakeItem => snakeItem.getAttribute("data-id") != id && ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
     for(i=0; i < snake_positions.length; i++) {
         if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
             resetSnake(snake);

@@ -13,6 +13,7 @@ let currentVision = 1;
 let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
 const button = document.getElementById('exit');
+let roomID = -1;
 
 button.addEventListener('click', () => {
     window.location = "/";
@@ -23,6 +24,7 @@ button.addEventListener('click', () => {
   });
 
 socket.emit('joinGame', { name: playerName, cookie: localStorage.getItem('snakeID') });
+
 socket.on('setCookie', ({ cookie }) => {
     localStorage.setItem('snakeID',cookie);
 })
@@ -56,6 +58,7 @@ socket.on('movePlayer', ({ direction, id }) => {
 socket.on('getPlayer', ({playerData}) => {
     if (!player) {
         player = playerData
+        roomID = player.roomID;
     }
     
 })
@@ -133,37 +136,41 @@ setInterval(() => {
 }, 100);
 
 const resetSnake = (snake) => {
-    //On Death Update high score
-    let temp = localStorage.getItem('snakeID');;
-    let TEupdate = totalEaten;
-    if(score > 1) TEupdate += (score-1);
 
-    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+    let id = snake[0].getAttribute("data-id");
 
     // Fix resetting snake at same location for all players
-    for(i=1; i<snake.length; i++) {
+    for(i=0; i<snake.length; i++) {
         snake[i].remove();
     }
-    const x = Math.floor(Math.random() * boardSize);
-    const y = Math.floor(Math.random() * boardSize);
-    snake[0].style.gridRowStart = x;
-    snake[0].style.gridColumnStart = y;
 
     if(player.id == id) {
         //On Death Update high score
-        let temp = document.cookie;
-        socket.emit("updateStats", {cookie: temp, dbHS: highScore, dbTE: totalEaten})
-    
-        //Compare with database high score
-        score = 1;
-        scoreEl.innerHTML = score;
+        let temp = localStorage.getItem('snakeID');;
+        let TEupdate = totalEaten;
+        if(score > 1) TEupdate += (score-1);
+        socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+
+        let vision = document.getElementById("vision-overlay");
+        vision.style.display = "none";
     }
     
 }
 
 const outputMove = (direction, id) => {
+    
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
+
+    if(document.querySelectorAll(".snake").length == snake.length){
+        if(player.id = id){
+            console.log("Winner");
+            let temp = localStorage.getItem('snakeID');;
+            let TEupdate = totalEaten;
+            if(score > 1) TEupdate += (score-1);
+            socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
+        }
+    }
 
     for(i=1; i<snake.length; i++) {
         snake[i].style.gridRowStart = snake_copy[i - 1].row;

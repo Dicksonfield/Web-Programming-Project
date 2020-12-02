@@ -33,15 +33,15 @@ io.on('connection', socket => {
     
     socket.on('joinGame', ({ name, cookie }) => {
         socket.join(roomID);
-        playerJoin(socket.id, name, roomID);
         room = rooms.find(item => item.id == roomID);
+        playerJoin(socket.id, name, roomID);
         if (room == null) {
             const room = {id: roomID,started: false,players:1}
             rooms.push(room)
         } 
         else {
             room.players++;
-            if(room.players == 2){
+            if(room.players == 4){
                 room.started = true;
                 roomID++;
             }
@@ -108,6 +108,7 @@ io.on('connection', socket => {
                     newUser(name, playerID);
                     setTimeout(() => { databaseHandle(name,playerID); }, 1000);
                 }
+                
                 else{
                     socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten, dbWins: result.wins}); }
             })
@@ -158,6 +159,7 @@ io.on('connection', socket => {
             });
     });
     
+    // default (highScore) sort
     socket.on('requestLeaderboard', () => {
         User.find().sort({ highScore: -1 })
         .then((result) => {
@@ -168,4 +170,25 @@ io.on('connection', socket => {
         });                                                            
     })
 
+    // totalEaten sort
+    socket.on('requestLeaderboardTotalEaten', () => {
+        User.find().sort({ totalEaten: -1 })
+        .then((result) => {
+            socket.emit("sendLeaderboard", {leaderboard: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });                                                            
+    })
+
+    // wins sort
+    socket.on('requestLeaderboardWins', () => {
+        User.find().sort({ wins: -1 })
+        .then((result) => {
+            socket.emit("sendLeaderboard", {leaderboard: result});
+        })
+        .catch((err) => {
+            console.log(err);
+        });                                                            
+    })
 });

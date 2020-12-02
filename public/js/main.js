@@ -114,6 +114,13 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+const mobileMovement = document.querySelectorAll(".mobileMovement");
+for (i = 0; i < mobileMovement.length; i++) {
+    mobileMovement[i].addEventListener('click', (e) => {
+      direction = e.target.getAttribute("data-move")
+    });
+  }
+
 setInterval(() => { 
     if(direction != null) {
         socket.emit('movePlayer', {direction})
@@ -152,12 +159,7 @@ const resetSnake = (snake) => {
 }
 
 const outputMove = (direction, id) => {
-    
-
     let snake = document.querySelectorAll(`[data-id='${id}']`)
-    if(!snake) {
-        return false;
-    }
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
 
     for(i=1; i<snake.length; i++) {
@@ -208,8 +210,9 @@ const outputMove = (direction, id) => {
             resetSnake(snake);
         }
     }
+
     
-    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake`)).map(snakeItem => snakeItem.getAttribute("data-id") != id && ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
+    let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
     for(i=0; i < snake_positions.length; i++) {
         if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
             resetSnake(snake);
@@ -233,5 +236,5 @@ const outputMove = (direction, id) => {
 
     snake = document.querySelectorAll(`[data-id='${id}']`);
     positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
-    // socket.emit('updatePosition', { id, positions });
+    socket.emit('updatePosition', { id, positions });
 }

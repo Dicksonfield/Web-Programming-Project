@@ -39,7 +39,7 @@ function totalEatenSort(){
  // sorts table by wins
 function winsSort(){
 
-    socket.emit("requestLeaderboardTotalEaten");
+    socket.emit("requestLeaderboardWins");
     socket.on("sendLeaderboard", ({leaderboard}) => {
     
         if(leaderboard.length > 100) leaderboard = leaderboard.slice(0,100);

@@ -135,7 +135,8 @@ for (i = 0; i < mobileMovement.length; i++) {
   }
 
 setInterval(() => { 
-    if(direction != null) {
+
+    if(direction != null && currentRoom.started) {
         socket.emit('movePlayer', {direction})
     }
 }, 100);

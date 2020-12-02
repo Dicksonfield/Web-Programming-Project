@@ -34,9 +34,20 @@ socket.on("sendStats", ({dbHighScore, dbTotalEaten, dbWins}) => {
     highEl.innerHTML = highScore;
 })
 
-socket.on('updatePlayers', ({ players }) => {
-    outputPlayers(players)
+socket.on('updatePlayers', ({ players, x, y }) => {
+    outputPlayers(players, x, y)
 })
+
+let food_x = 1;
+let food_y = 1;
+
+socket.on('generateFood', ({ x, y }) => {
+    food_x = x;
+    food_y = y;
+    generateFood();
+})
+
+
 
 socket.on('movePlayer', ({ direction, id }) => {
     outputMove(direction, id);
@@ -49,13 +60,12 @@ socket.on('getPlayer', ({playerData}) => {
     
 })
 
-let food_x = 1;
-let food_y = 1;
+
 
 const generateFood = () => {
+    console.log(food_x, food_y)
     const food = document.getElementById("food");
-    food_x, food_y = foodValidation();
-
+    
     food.style.gridRowStart = food_x;
     food.style.gridColumnStart = food_y;
     food.id = "food";
@@ -79,9 +89,8 @@ function selectPos (){
 
 generateFood();
 
-const outputPlayers = players => {
+const outputPlayers = (players, x, y) => {
     canvas.innerHTML = "";
-    console.log(players)
     for(i=0; i<players.length; i++) {
         players[i].snake.forEach(snakePart => {
             let snake = document.createElement("div");
@@ -97,8 +106,8 @@ const outputPlayers = players => {
     let food = document.createElement("div");
     food.id = "food"
     food.className = "food"
-    food.style.gridRowStart = food_x;
-    food.style.gridColumnStart = food_y;
+    food.style.gridRowStart = x;
+    food.style.gridColumnStart = y;
     canvas.appendChild(food);
 }
 
@@ -121,8 +130,7 @@ for (i = 0; i < mobileMovement.length; i++) {
 
 setInterval(() => { 
     if(direction != null) {
-        // socket.emit('movePlayer', {direction})
-        outputMove(direction, player.id)
+        socket.emit('movePlayer', {direction})
     }
 }, 100);
 
@@ -187,6 +195,7 @@ const outputMove = (direction, id) => {
     let food = document.getElementById("food");
     let styleFood = getComputedStyle(food);
 
+
     if(style.gridColumnStart == styleFood.gridColumnStart && style.gridRowStart == styleFood.gridRowStart) {
         let snakePart = document.createElement("div");
         snakePart.id = "snake";
@@ -201,7 +210,8 @@ const outputMove = (direction, id) => {
         if(score > highScore){
             highEl.innerHTML = score;
             highScore = score; }
-        generateFood();
+
+        socket.emit('generateFood')
     }
 
     for(i=1; i < snake_copy.length - 1; i++) {
@@ -233,5 +243,5 @@ const outputMove = (direction, id) => {
 
     snake = document.querySelectorAll(`[data-id='${id}']`);
     positions = Array.prototype.slice.call(snake).map(snakeItem => ({x: snakeItem.style.gridRowStart, y: snakeItem.style.gridColumnStart}));
-    socket.emit('updatePosition', { id, positions });
+    // socket.emit('updatePosition', { id, positions });
 }

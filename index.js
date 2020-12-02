@@ -20,7 +20,13 @@ const { Console } = require('console');
 
 var rooms = [];
 let roomID = 0;
+let x = selectPos();
+let y = selectPos();
+let foodEaten = false;
 
+function selectPos (){
+    return Math.floor(Math.random() * (50 - 1) + 1);
+}
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
@@ -44,22 +50,38 @@ io.on('connection', socket => {
         databaseHandle(name,cookie);
 
         io.emit('updatePlayers', {
-            players: getPlayers()
+            players: getPlayers(),
+            x,
+            y
         })
         io.emit('getPlayer', { playerData: getPlayer(socket.id) })
     })
     
     socket.on('movePlayer', ({ direction }) => {
+        
         io.emit('movePlayer', ({ direction: direction, id: socket.id }))
     })
 
-    socket.on('updatePosition', (obj) => {
-        updatePosition(obj.id, obj.positions)
-        io.emit('updatePlayers', {
-            players: getPlayers()
-        })
-        io.emit('getPlayer', { playerData: getPlayer(socket.id) })
+    socket.on('generateFood', () => {
+        if(foodEaten == false) {
+            x = selectPos();
+            y = selectPos();
+        }
+        foodEaten = true;
+        console.log(x, y)
+        io.emit('generateFood', ({x, y}))
+        setInterval(() => { 
+            foodEaten = false;
+        }, 2000);
     })
+
+    // socket.on('updatePosition', (obj) => {
+    //     updatePosition(obj.id, obj.positions)
+    //     io.emit('updatePlayers', {
+    //         players: getPlayers()
+    //     })
+    //     io.emit('getPlayer', { playerData: getPlayer(socket.id) })
+    // })
     
     socket.on('disconnect', () => {
         const player = playerLeave(socket.id);

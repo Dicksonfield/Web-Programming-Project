@@ -30,7 +30,7 @@ let foodEaten = false;
 
 //generates an x,y position
 function selectPos (){
-    return Math.floor(Math.random() * (39) + 1);
+    return Math.floor(Math.random() * (30 - 1) + 1);
 }
 app.use(express.static(path.join(__dirname, 'public')));
 

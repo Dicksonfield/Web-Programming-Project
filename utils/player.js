@@ -2,8 +2,8 @@ let players = [];
 
 //constructor for player, holds a unique id, username, room ID and starting position randomly generated
 const playerJoin = (id, name, roomID) => {
-    const x = Math.floor(Math.random() * 49) + 1;
-    const y = Math.floor(Math.random() * 49) + 1;
+    const x = Math.floor(Math.random() * 29) + 1;
+    const y = Math.floor(Math.random() * 29) + 1;
     const user = { id, name, snake: [{x, y}], roomID}
     players.push(user);
     return user

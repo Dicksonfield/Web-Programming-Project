@@ -100,10 +100,14 @@
   @extend #canvas;
   z-index: 3;
   position: absolute;
+<<<<<<< HEAD
   background-image: radial-gradient(
     rgba(255, 255, 255, 0.5),
     rgba(0, 0, 0, 0.6)
   );
+=======
+  background-color: rgba(36, 22, 37, 0.381);
+>>>>>>> parent of 3b481b2... updated game over overlay
   display: flex;
   justify-content: center;
   align-items: center;

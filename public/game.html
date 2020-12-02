@@ -10,24 +10,34 @@
 
     <div id="overlay"></div>
 
-
+    <!-- exit button image -->
     <div class="exit">
         <img src="/images/exit_button.png" id="exit" alt="Exit" width="50" height="50">
     </div>
+
+    <!-- score div -->
     <div class="score">
         Score: 
         <span id="score"> 1</span>
     </div>
+    <!-- high score div -->
     <div class="high_score">
         High Score: 
         <span id="high_score"> 1</span>
     </div>
+
+    <!-- overlay for vision mechanic -->
     <div id="vision-overlay">
         
     </div>
+
+    <!-- creates a custom canvas -->
     <div id="canvas">
+        <!-- food object -->
         <div id="food" class="food"></div>
     </div>
+
+    <!-- move buttons (only visible on mobile devices) -->
     <div class="mobileButtons">
         <div>
             <div id="mobileUp" class="mobileMovement" data-move="ArrowUp">Up</div>
@@ -40,6 +50,7 @@
         
     </div>
     
+    <!-- imports scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/main.js"></script>
 </body>

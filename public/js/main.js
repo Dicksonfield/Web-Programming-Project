@@ -1,5 +1,4 @@
 const socket = io();
-
 const canvas = document.getElementById('canvas');
 let direction = null;
 const styleCanvas = getComputedStyle(canvas);
@@ -14,6 +13,7 @@ let currentVision = 1;
 let params = new URLSearchParams(location.search);
 const playerName = params.get('name');
 const button = document.getElementById('exit');
+let roomID = -1;
 
 button.addEventListener('click', () => {
     window.location = "/";
@@ -24,6 +24,7 @@ button.addEventListener('click', () => {
   });
 
 socket.emit('joinGame', { name: playerName, cookie: localStorage.getItem('snakeID') });
+
 socket.on('setCookie', ({ cookie }) => {
     localStorage.setItem('snakeID',cookie);
 })
@@ -44,7 +45,11 @@ socket.on('movePlayer', ({ direction, id }) => {
 })
 
 socket.on('getPlayer', ({playerData}) => {
-    player = playerData
+    if (!player) {
+        player = playerData
+        roomID = player.roomID;
+    }
+    
 })
 
 let food_x = 1;
@@ -101,9 +106,10 @@ const outputPlayers = players => {
 }
 
 document.addEventListener("keydown", (e) => {
-    console.log(player)
     if(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
-        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && player.snake.length > 1) {
+        let snake = document.querySelectorAll(`[data-id='${player.id}']`)
+        if((e.code == "ArrowLeft" && direction == "ArrowRight" || e.code == "ArrowRight" && direction == "ArrowLeft" || e.code == "ArrowUp" && direction == "ArrowDown" || e.code == "ArrowDown" && direction == "ArrowUp") && snake.length > 1) {
+            console.log("opposite direction")
             return false;
         }
         direction = e.code;
@@ -114,32 +120,44 @@ setInterval(() => {
     if(direction != null) {
         socket.emit('movePlayer', {direction})
     }
-}, 50);
+}, 100);
 
 const resetSnake = (snake) => {
-    //On Death Update high score
-    let temp = localStorage.getItem('snakeID');;
-    let TEupdate = totalEaten;
-    if(score > 1) TEupdate += (score-1);
 
-    socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+    let id = snake[0].getAttribute("data-id");
 
     // Fix resetting snake at same location for all players
     for(i=0; i<snake.length; i++) {
         snake[i].remove();
     }
 
-    let vision = document.getElementById("vision-overlay");
-    vision.style.display = "none";
+    if(player.id == id) {
+        //On Death Update high score
+        let temp = localStorage.getItem('snakeID');;
+        let TEupdate = totalEaten;
+        if(score > 1) TEupdate += (score-1);
+        socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: wins})
+
+        let vision = document.getElementById("vision-overlay");
+        vision.style.display = "none";
+    }
+    
 }
 
 const outputMove = (direction, id) => {
-    //if(document.querySelectorAll(".snake") = snake.length){
-      //  console.log(playerName + " Wins!")
-    //}
     
     let snake = document.querySelectorAll(`[data-id='${id}']`)
     let snake_copy = Array.prototype.slice.call(snake).map(snakeItem => ({row: snakeItem.style.gridRowStart, column: snakeItem.style.gridColumnStart}));
+
+    if(document.querySelectorAll(".snake").length == snake.length){
+        if(player.id = id){
+            console.log("Winner");
+            let temp = localStorage.getItem('snakeID');;
+            let TEupdate = totalEaten;
+            if(score > 1) TEupdate += (score-1);
+            socket.emit("updateStats", {updateName: playerName, cookie: temp, dbHS: highScore, dbTE: TEupdate, dbW: (wins+1)})
+        }
+    }
 
     for(i=1; i<snake.length; i++) {
         snake[i].style.gridRowStart = snake_copy[i - 1].row;
@@ -190,6 +208,7 @@ const outputMove = (direction, id) => {
         }
     }
 
+    
     let snake_positions = Array.prototype.slice.call(document.querySelectorAll(`.snake[data-id]:not([data-id=${id}])`)).map(snakeItem => ({row: parseInt(snakeItem.style.gridRowStart), column: parseInt(snakeItem.style.gridColumnStart)}));
     for(i=0; i < snake_positions.length; i++) {
         if(snake_positions[i].row == snake[0].style.gridRowStart && snake_positions[i].column == snake[0].style.gridColumnStart) {
@@ -198,13 +217,14 @@ const outputMove = (direction, id) => {
         }
     }
 
-    // Fix this not running per client
-    const visionOverlay = document.getElementById("vision-overlay");
-    if (snake.length in visionObj) {
-        currentVision = visionObj[snake.length];
+    if(player.id == id) {
+        let snake = document.querySelectorAll(`[data-id='${player.id}']`)
+        const visionOverlay = document.getElementById("vision-overlay");
+        if (snake.length in visionObj) {
+            currentVision = visionObj[snake.length];
+        }
+        visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * (100 / boardSize))-1}% ${(snake[0].style.gridRowStart * (100 / boardSize))-1}%,transparent 10px,rgba(0, 0, 0, 0.96) ${currentVision})`
     }
-    visionOverlay.style.background = `radial-gradient(circle at ${(snake[0].style.gridColumnStart * (100 / boardSize))-1}% ${(snake[0].style.gridRowStart * (100 / boardSize))-1}%,transparent 10px,rgba(0, 0, 0, 0.96) ${currentVision})`
-    
 
     if(x > boardSize || y > boardSize || x < 0 || y < 0) {
         resetSnake(snake);

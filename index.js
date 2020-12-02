@@ -27,15 +27,15 @@ io.on('connection', socket => {
     
     socket.on('joinGame', ({ name, cookie }) => {
         socket.join(roomID);
-        playerJoin(socket.id, name, roomID);
         room = rooms.find(item => item.id == roomID);
+        playerJoin(socket.id, name, roomID);
         if (room == null) {
             const room = {id: roomID,started: false,players:1}
             rooms.push(room)
         } 
         else {
             room.players++;
-            if(room.players == 2){
+            if(room.players == 4){
                 room.started = true;
                 roomID++;
             }
@@ -89,9 +89,6 @@ io.on('connection', socket => {
                 
                 else{
                     socket.emit("sendStats", { dbHighScore: result.highScore, dbTotalEaten: result.totalEaten, dbWins: result.wins}); }
-
-                    const playerID = uuid.v4();
-                    newUser("Test_95", playerID);
             })
             .catch((err) => {
                 console.log(err);

@@ -1,42 +1,38 @@
 h1 {
   color: white;
   text-align: center;
-  font-family: monospace;;
   margin-bottom: 30px;
   font-size: 64px;
 }
 p {
-  font-family: verdana;
   font-size: 20px;
   text-align: center;
-  }
+}
 
-.form-container{
+.form-container {
   background-color: #656565c9;
   display: flex;
   justify-content: center;
-  
+
   flex-direction: column;
   padding: 20px 40px;
   min-width: 500px;
-  
-  input[type=text] {
-      width: 100%;
-      padding: 10px 15px;
-      &:focus{
-        outline:none;
-      }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px 15px;
+    &:focus {
+      outline: none;
     }
+  }
 
-  .btn-container{
-
-    display:flex;
+  .btn-container {
+    display: flex;
     justify-content: space-between;
     margin-top: 10px;
-    
-    .btn{
-      border:none;
-      font-family: 'Courier New', Courier, monospace;;
+
+    .btn {
+      border: none;
       font-size: 15px;
       background-color: gray;
       color: rgb(255, 255, 255);
@@ -46,11 +42,9 @@ p {
       text-align: center;
       transition: 0.5s ease-in-out background-color;
       cursor: pointer;
-      &:hover{
-      background-color: darken(grey, 10%);
+      &:hover {
+        background-color: darken(grey, 10%);
       }
-    
     }
   }
-
 }

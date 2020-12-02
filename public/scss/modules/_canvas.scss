@@ -1,7 +1,5 @@
 #canvas {
   position: relative;
-  width: 95vh;
-  height: 95vh;
   background-color: #ccc;
   display: grid;
   grid-template-rows: repeat(50, 1fr);
@@ -13,8 +11,8 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  width:30px;
-  height:30px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 
@@ -49,4 +47,33 @@
   position: absolute;
   z-index: 2;
   background-color: transparent;
+}
+
+/* Portrait */
+@media screen and (orientation: portrait) {
+  #canvas {
+    width: 95vw;
+    height: 95vw;
+    outline: 5px solid rgb(255, 255, 255);
+  }
+  .score,
+  .high_score {
+    font-size: 20px;
+  }
+  .high_score {
+    top: 35px;
+  }
+  .exit {
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+/* Landscape */
+@media screen and (orientation: landscape) {
+  #canvas {
+    width: 95vh;
+    height: 95vh;
+  }
 }

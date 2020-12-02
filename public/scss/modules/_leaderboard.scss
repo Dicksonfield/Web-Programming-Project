@@ -24,27 +24,6 @@ h2 {
     width: 100%;
   }
 
-  &__btn {
-    border: none;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 15px;
-    background-color: gray;
-    color: rgb(255, 255, 255);
-    padding: 10px;
-    text-decoration: none;
-    width: 20%;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    margin: 10px;
-    text-align: center;
-    transition: 0.5s ease-in-out background-color;
-    cursor: pointer;
-    &:hover {
-      background-color: darken(grey, 10%);
-    }
-  }
-
   .table-container {
     //margin-top: 10px;
     background-color: #6a6464a3;
@@ -83,6 +62,27 @@ h2 {
       tr {
         width: 100%;
       }
+    }
+  }
+
+  &__btn {
+    border: none;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 15px;
+    background-color: gray;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    text-decoration: none;
+    width: 20%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    margin: 10px;
+    text-align: center;
+    transition: 0.5s ease-in-out background-color;
+    cursor: pointer;
+    &:hover {
+      background-color: darken(grey, 10%);
     }
   }
 }
